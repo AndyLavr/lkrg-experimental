@@ -1,0 +1,143 @@
+/*
+ * pi3's Linux kernel Runtime Guard
+ *
+ * Component:
+ *  - Main module
+ *
+ * Notes:
+ *  - None
+ *
+ * Timeline:
+ *  - Created: 24.XI.2015
+ *
+ * Author:
+ *  - Adam 'pi3' Zabrocki (http://pi3.com.pl)
+ *
+ */
+
+#include "p_lkrg_main.h"
+
+unsigned int p_init_log_level = 1;
+
+/*
+ * Main entry point for the module - initialization.
+ */
+static int __init p_lkrg_register(void) {
+
+   int p_ret = P_LKRG_SUCCESS;
+
+   memset(&p_lkrg_global_ctrl,0x0,sizeof(p_lkrg_global_ctrl_struct));
+   p_lkrg_global_ctrl.p_timestamp = 15;        // seconds
+   if (p_init_log_level >= P_LOG_LEVEL_MAX)
+      p_lkrg_global_ctrl.p_log_level = 1;      // 'active'
+   else
+      p_lkrg_global_ctrl.p_log_level = p_init_log_level;
+   p_lkrg_global_ctrl.p_block_modules = 0x1;   // Block loading new modules
+   p_lkrg_global_ctrl.p_unhide_module = 0x1;   // We are initially not hidden
+
+   if (get_kallsyms_address() != P_LKRG_SUCCESS) {
+      p_print_log(P_LKRG_CRIT,
+             "Can't find kallsyms_lookup_name() function address! Exiting...\n");
+      return P_LKRG_RESOLVER_ERROR;
+   }
+#ifdef P_LKRG_DEBUG
+     else {
+        p_print_log(P_LKRG_DBG,
+               "kallsyms_lookup_name() => 0x%lx\n",(long)p_kallsyms_lookup_name);
+     }
+#endif
+
+   /*
+    * First, we need to plant *kprobes... Before DB is created!
+    */
+   if (p_protected_features_init()) {
+      p_print_log(P_LKRG_CRIT,
+             "Can't initialize protected features! Exiting...\n");
+      return P_LKRG_PROTECTED_ERROR;
+   }
+
+   if (p_offload_cache_init()) {
+      p_print_log(P_LKRG_CRIT,
+             "Can\'t initialize offloading cache :(\n");
+      return P_LKRG_GENERAL_ERROR;
+   }
+
+   /*
+    * Initialize kmod module
+    */
+   if (p_kmod_init()) {
+      p_print_log(P_LKRG_CRIT,
+             "Can't initialize kernel modules handling! Exiting...\n");
+      p_ret = P_LKRG_KMOD_ERROR;
+      goto p_main_error;
+   }
+
+   if (p_create_database() != P_LKRG_SUCCESS) {
+      p_print_log(P_LKRG_CRIT,
+             "Can't create database! Exiting...\n");
+      p_ret = P_LKRG_DATABASE_ERROR;
+      goto p_main_error;
+   }
+
+   cpu_notifier_register_begin();
+   __register_hotcpu_notifier(&p_cpu_notifier);
+   cpu_notifier_register_done();
+
+   p_integrity_timer();
+   p_register_notifiers();
+
+   mutex_lock(&module_mutex);
+//   p_hide_itself();
+   mutex_unlock(&module_mutex);
+
+   return P_LKRG_SUCCESS;
+
+p_main_error:
+
+   p_deregister_module_notifier();
+   if (p_db.p_IDT_MSR_CRx_array)
+      kzfree(p_db.p_IDT_MSR_CRx_array);
+   if (p_lkrg_random_ctrl_password)
+      kzfree(p_lkrg_random_ctrl_password);
+   p_offload_cache_delete();
+   p_protected_features_exit();
+
+   return p_ret;
+}
+
+/*
+ * This function normally should never be called - unloading module cleanup
+ */
+static void __exit p_lkrg_deregister(void) {
+
+#ifdef P_LKRG_DEBUG
+   p_print_log(P_LKRG_DBG,
+          "I should never be here! This operation probably is going to break your system! Goodbye ;)\n");
+#endif
+
+   del_timer(&p_timer);
+   p_deregister_notifiers();
+
+   cpu_notifier_register_begin();
+   __unregister_hotcpu_notifier(&p_cpu_notifier);
+   cpu_notifier_register_done();
+
+   p_deregister_module_notifier();
+
+   kzfree(p_db.p_IDT_MSR_CRx_array);
+   kzfree(p_lkrg_random_ctrl_password);
+   p_offload_cache_delete();
+
+   p_protected_features_exit();
+}
+
+
+module_init(p_lkrg_register);
+module_exit(p_lkrg_deregister);
+
+module_param(p_init_log_level, uint, 0000);
+MODULE_PARM_DESC(p_init_log_level, "Logging level init value [1 (alive) is default]");
+
+MODULE_AUTHOR("Adam 'pi3' Zabrocki (http://pi3.com.pl)");
+MODULE_DESCRIPTION("pi3's Linux kernel Runtime Guard");
+MODULE_LICENSE("GPL"); // Don't think so...
