@@ -202,9 +202,10 @@ void p_check_integrity(struct work_struct *p_work) {
 
    /* We are heavly consuming module list here - take 'module_mutex' */
    mutex_lock(&module_mutex);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
    /* Hacky way of 'stopping' KOBJs activities */
    mutex_lock(p_kernfs_mutex);
-
+#endif
 
    /*
     * Memory allocation may fail... let's loop here!
@@ -217,8 +218,10 @@ void p_check_integrity(struct work_struct *p_work) {
 
    /* Release the 'module_mutex' */
    mutex_unlock(&module_mutex);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
    /* unlock KOBJ activities */
    mutex_unlock(p_kernfs_mutex);
+#endif
 
    /* Find information about current CPUs in the system */
    p_get_cpus(&p_tmp_cpu_info);

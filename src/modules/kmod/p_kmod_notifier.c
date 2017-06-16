@@ -182,8 +182,10 @@ static int p_module_event_notifier(struct notifier_block *p_this, unsigned long 
 
       /* We are heavly consuming module list here - take 'module_mutex' */
       mutex_lock(&module_mutex);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
       /* Hacky way of 'stopping' KOBJs activities */
       mutex_lock(p_kernfs_mutex);
+#endif
 
       /*
        * First, synchronize possible database changes with other LKRG components...
@@ -263,8 +265,11 @@ static int p_module_event_notifier(struct notifier_block *p_this, unsigned long 
 
          /* We are heavly consuming module list here - take 'module_mutex' */
          mutex_lock(&module_mutex);
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
          /* Hacky way of 'stopping' KOBJs activities */
          mutex_lock(p_kernfs_mutex);
+#endif
 
          /*
           * First, synchronize possible database changes with other LKRG components...
@@ -314,8 +319,10 @@ p_module_event_notifier_unlock_out:
 
    /* God mode off ;) */
    spin_unlock_irqrestore(&p_db_lock,p_db_flags);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
    /* unlock KOBJ activities */
    mutex_unlock(p_kernfs_mutex);
+#endif
    /* Release the 'module_mutex' */
    mutex_unlock(&module_mutex);
 

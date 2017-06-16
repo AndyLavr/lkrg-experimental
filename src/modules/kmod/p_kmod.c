@@ -30,7 +30,9 @@
 struct list_head *p_ddebug_tables = NULL;
 struct mutex *p_ddebug_lock = NULL;
 struct list_head *p_global_modules = NULL;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
 struct mutex *p_kernfs_mutex = NULL;
+#endif
 struct kset **p_module_kset = NULL;
 
 int p_kmod_init(void) {
@@ -46,19 +48,27 @@ int p_kmod_init(void) {
    p_ddebug_tables    = (struct list_head *)p_kallsyms_lookup_name("ddebug_tables");
    p_ddebug_lock      = (struct mutex *)p_kallsyms_lookup_name("ddebug_lock");
    p_global_modules   = (struct list_head *)p_kallsyms_lookup_name("modules");
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
    p_kernfs_mutex     = (struct mutex *)p_kallsyms_lookup_name("kernfs_mutex");
+#endif
    p_module_kset      = (struct kset **)p_kallsyms_lookup_name("module_kset");
 
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_DBG,
           "<p_kmod_init> p_ddebug_tables[0x%lx] p_ddebug_lock[0x%lx] "
                         "module_mutex[0x%lx] p_global_modules[0x%p] "
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
                         "p_kernfs_mutex[0x%p] p_module_kset[0x%p]\n",
+#else
+                        "p_module_kset[0x%p]\n",
+#endif
                                                             (long)p_ddebug_tables,
                                                             (long)p_ddebug_lock,
                                                             (long)&module_mutex,
                                                              p_global_modules,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
                                                              p_kernfs_mutex,
+#endif
                                                              p_module_kset);
 #endif
 
@@ -69,12 +79,14 @@ int p_kmod_init(void) {
       goto p_kmod_init_out;
    }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
    if (!p_kernfs_mutex) {
       p_print_log(P_LKRG_ERR,
              "KMOD error! Can't find 'kernfs_mutex' variable :( Exiting...\n");
       p_ret = P_LKRG_GENERAL_ERROR;
       goto p_kmod_init_out;
    }
+#endif
 
    if (!p_module_kset) {
       p_print_log(P_LKRG_ERR,

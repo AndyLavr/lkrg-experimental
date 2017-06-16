@@ -59,7 +59,9 @@ typedef struct p_module_kobj_mem {
 extern struct list_head *p_ddebug_tables;
 extern struct mutex *p_ddebug_lock;
 extern struct list_head *p_global_modules;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
 extern struct mutex *p_kernfs_mutex;
+#endif
 extern struct kset **p_module_kset;
 
 /* Module activity events */

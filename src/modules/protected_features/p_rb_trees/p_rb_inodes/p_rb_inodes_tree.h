@@ -208,7 +208,9 @@ static inline void p_dump_inode_ops(const struct inode_operations *p_arg) {
    p_print_log(P_LKRG_DBG, "rmdir => 0x%p\n",p_arg->rmdir);
    p_print_log(P_LKRG_DBG, "mknod => 0x%p\n",p_arg->mknod);
    p_print_log(P_LKRG_DBG, "rename => 0x%p\n",p_arg->rename);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
    p_print_log(P_LKRG_DBG, "rename2 => 0x%p\n",p_arg->rename2);
+#endif
    p_print_log(P_LKRG_DBG, "setattr => 0x%p\n",p_arg->setattr);
    p_print_log(P_LKRG_DBG, "getattr => 0x%p\n",p_arg->getattr);
    p_print_log(P_LKRG_DBG, "setxattr => 0x%p\n",p_arg->setxattr);
@@ -218,8 +220,10 @@ static inline void p_dump_inode_ops(const struct inode_operations *p_arg) {
    p_print_log(P_LKRG_DBG, "fiemap => 0x%p\n",p_arg->fiemap);
    p_print_log(P_LKRG_DBG, "update_time => 0x%p\n",p_arg->update_time);
    p_print_log(P_LKRG_DBG, "atomic_open => 0x%p\n",p_arg->atomic_open);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
    p_print_log(P_LKRG_DBG, "tmpfile => 0x%p\n",p_arg->tmpfile);
    p_print_log(P_LKRG_DBG, "set_acl => 0x%p\n",p_arg->set_acl);
+#endif
 
 }
 
@@ -230,7 +234,9 @@ static inline void p_dump_file_ops(const struct file_operations *p_arg) {
    p_print_log(P_LKRG_DBG, "write => 0x%p\n",p_arg->write);
    p_print_log(P_LKRG_DBG, "read_iter => 0x%p\n",p_arg->read_iter);
    p_print_log(P_LKRG_DBG, "write_iter => 0x%p\n",p_arg->write_iter);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
    p_print_log(P_LKRG_DBG, "iterate => 0x%p\n",p_arg->iterate);
+#endif
    p_print_log(P_LKRG_DBG, "poll => 0x%p\n",p_arg->poll);
    p_print_log(P_LKRG_DBG, "unlocked_ioctl => 0x%p\n",p_arg->unlocked_ioctl);
    p_print_log(P_LKRG_DBG, "compat_ioctl => 0x%p\n",p_arg->compat_ioctl);
@@ -244,7 +250,9 @@ static inline void p_dump_file_ops(const struct file_operations *p_arg) {
    p_print_log(P_LKRG_DBG, "lock => 0x%p\n",p_arg->lock);
    p_print_log(P_LKRG_DBG, "sendpage => 0x%p\n",p_arg->sendpage);
    p_print_log(P_LKRG_DBG, "get_unmapped_area => 0x%p\n",p_arg->get_unmapped_area);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
    p_print_log(P_LKRG_DBG, "check_flags => 0x%p\n",p_arg->check_flags);
+#endif
    p_print_log(P_LKRG_DBG, "flock => 0x%p\n",p_arg->flock);
    p_print_log(P_LKRG_DBG, "splice_write => 0x%p\n",p_arg->splice_write);
    p_print_log(P_LKRG_DBG, "splice_read => 0x%p\n",p_arg->splice_read);

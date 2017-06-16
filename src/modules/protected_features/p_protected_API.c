@@ -901,12 +901,14 @@ int p_protected_features_init(void) {
       goto p_protected_features_init_err;
    }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,0,0)
    if (p_install_kprobe_seq_start_hook()) {
       p_print_log(P_LKRG_ERR,
              "ERROR: Can\'t hook kprobe_seq_start function :(\n");
       p_ret = P_LKRG_GENERAL_ERROR;
       goto p_protected_features_init_err;
    }
+#endif
 
    p_ret = P_LKRG_SUCCESS;
 
@@ -952,7 +954,9 @@ void p_protected_features_exit(void) {
    p_uninstall_may_open_hook();
    p_uninstall_write_enabled_file_bool_hook();
    p_uninstall_process_vm_rw_hook();
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,0,0)
    p_uninstall_kprobe_seq_start_hook();
+#endif
 
    /* Before deleting cache i should clean each entry! */
    p_delete_rb_pids();

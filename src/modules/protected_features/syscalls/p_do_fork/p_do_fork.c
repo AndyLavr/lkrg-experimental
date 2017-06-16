@@ -25,7 +25,11 @@
 char p_do_fork_kretprobe_state = 0x0;
 
 static struct kretprobe p_do_fork_kretprobe = {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,0,0)
+    .kp.symbol_name = "do_fork",
+#else
     .kp.symbol_name = "_do_fork",
+#endif
     .handler = p_do_fork_ret,
     .entry_handler = p_do_fork_entry,
     .data_size = sizeof(struct p_do_fork_data),
