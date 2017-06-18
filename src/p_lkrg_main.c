@@ -29,7 +29,7 @@ static int __init p_lkrg_register(void) {
    memset(&p_lkrg_global_ctrl,0x0,sizeof(p_lkrg_global_ctrl_struct));
    p_lkrg_global_ctrl.p_timestamp = 15;        // seconds
    if (p_init_log_level >= P_LOG_LEVEL_MAX)
-      p_lkrg_global_ctrl.p_log_level = 1;      // 'active'
+      p_lkrg_global_ctrl.p_log_level = P_LOG_LEVEL_MAX-1;      // Max
    else
       p_lkrg_global_ctrl.p_log_level = p_init_log_level;
    p_lkrg_global_ctrl.p_block_modules = 0x1;   // Block loading new modules
