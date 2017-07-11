@@ -224,7 +224,7 @@ inline int p_discover_ctrl_structure(struct module *p_tmp, unsigned long *p_addr
                goto p_discover_out;
             }
 
-            if (strncmp(p_pass_hash,p_lkrg_random_ctrl_password,strlen(p_lkrg_random_ctrl_password))) {
+            if (strncmp(p_pass_hash,p_lkrg_random_ctrl_password,P_SHA1_SIZE)) {
                p_print_log(P_LKRG_INFO,
                       "CTRL Structure: Invalid password! [%s]\n",p_pass_val);
                goto p_discover_out;
