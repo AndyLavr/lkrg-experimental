@@ -6,6 +6,10 @@
  *
  * Notes:
  *  - Register multiple notifiers routines for integrity checking
+ *  - Unfortunately, since Linux 4.10 there isn't idle notifier anymore :(
+ *    Integrity check fired on idle state won't work in newer kernels.
+ *    More information can be found here:
+ *     => https://patchwork.kernel.org/patch/9435797/
  *
  * Timeline:
  *  - Created: 30.X.2016
@@ -17,8 +21,9 @@
 
 #include "../../p_lkrg_main.h"
 
-
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 static int p_idle_notifier(struct notifier_block *p_nb, unsigned long p_val, void *p_data);
+#endif
 #ifdef CONFIG_CPU_FREQ
 static int p_freq_transition_notifier(struct notifier_block *p_nb, unsigned long p_val, void *p_data);
 #endif
@@ -36,9 +41,11 @@ static int p_usb_notifier(struct notifier_block *p_nb, unsigned long p_val, void
 static int p_acpi_notifier(struct notifier_block *p_nb, unsigned long p_val, void *p_data);
 
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 static struct notifier_block p_idle_notifier_nb = {
    .notifier_call = p_idle_notifier,
 };
+#endif
 
 #ifdef CONFIG_CPU_FREQ
 static struct notifier_block p_freq_transition_nb = {
@@ -98,7 +105,9 @@ void p_register_notifiers(void) {
 #endif
 
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
    idle_notifier_register(&p_idle_notifier_nb);
+#endif
 #ifdef CONFIG_CPU_FREQ
    cpufreq_register_notifier(&p_freq_transition_nb, CPUFREQ_TRANSITION_NOTIFIER);
 #endif
@@ -124,6 +133,7 @@ void p_register_notifiers(void) {
 
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 static int p_idle_notifier(struct notifier_block *p_nb, unsigned long p_val, void *p_data) {
 
 #ifdef P_LKRG_NOTIFIER_DBG
@@ -147,6 +157,7 @@ static int p_idle_notifier(struct notifier_block *p_nb, unsigned long p_val, voi
 
    return 0x0;
 }
+#endif
 
 #ifdef CONFIG_CPU_FREQ
 static int p_freq_transition_notifier(struct notifier_block *p_nb, unsigned long p_val, void *p_data) {
@@ -425,7 +436,9 @@ void p_deregister_notifiers(void) {
           "Entering function <p_deregister_notifiers>\n");
 #endif
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
    idle_notifier_unregister(&p_idle_notifier_nb);
+#endif
 #ifdef CONFIG_CPU_FREQ
    cpufreq_unregister_notifier(&p_freq_transition_nb, CPUFREQ_TRANSITION_NOTIFIER);
 #endif

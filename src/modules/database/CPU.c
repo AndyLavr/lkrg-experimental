@@ -22,10 +22,15 @@
  *    CPU will be hot plugged / activated this information will be
  *    visible for us!
  *
- * - x86 (and amd64) arch: following informations are critical and need
- *   to be verified (checking integrity):
- *    => IDT base and/or entire table
- *    => MSRs
+ *  - x86 (and amd64) arch: following informations are critical and need
+ *    to be verified (checking integrity):
+ *     => IDT base and/or entire table
+ *     => MSRs
+ *
+ *  - Since Linux 4.10 there isn't CPU_[ONLIE/DEAD] notifiers :(
+ *    Hot plugging CPU monitor is no longer supported. More information
+ *    Can be found here:
+ *     => https://patchwork.kernel.org/patch/9448577/
  *
  * Timeline:
  *  - Created: 28.XI.2015
@@ -120,6 +125,7 @@ int p_cmp_cpus(p_cpu_info *p_arg1, p_cpu_info *p_arg2) {
    return p_flag;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 /*
  * Notification routine when new CPU is online or become offline.
  * It may be critical from the security point of view, because new per-CPU
@@ -348,8 +354,8 @@ void p_cpu_dead_action(unsigned int p_cpu) {
 
 }
 
-
 struct notifier_block p_cpu_notifier =
 {
    .notifier_call = p_cpu_callback,
 };
+#endif

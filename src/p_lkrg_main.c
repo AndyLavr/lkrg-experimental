@@ -79,9 +79,11 @@ static int __init p_lkrg_register(void) {
       goto p_main_error;
    }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
    cpu_notifier_register_begin();
    __register_hotcpu_notifier(&p_cpu_notifier);
    cpu_notifier_register_done();
+#endif
 
    p_integrity_timer();
    p_register_notifiers();
@@ -118,9 +120,11 @@ static void __exit p_lkrg_deregister(void) {
    del_timer(&p_timer);
    p_deregister_notifiers();
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
    cpu_notifier_register_begin();
    __unregister_hotcpu_notifier(&p_cpu_notifier);
    cpu_notifier_register_done();
+#endif
 
    p_deregister_module_notifier();
 

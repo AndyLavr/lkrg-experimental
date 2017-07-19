@@ -144,7 +144,9 @@ int hash_from_iommu_table(void);
 int p_create_database(void);
 void p_get_cpus(p_cpu_info *p_arg);
 int p_cmp_cpus(p_cpu_info *p_arg1, p_cpu_info *p_arg2);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 int p_cpu_callback(struct notifier_block *p_block, unsigned long p_action, void *p_hcpu);
+#endif
 void p_cpu_online_action(unsigned int p_cpu);
 void p_cpu_dead_action(unsigned int p_cpu);
 uint32_t hash_from_CPU_data(p_IDT_MSR_CRx_hash_mem *p_arg);
