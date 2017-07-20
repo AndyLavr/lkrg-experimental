@@ -32,7 +32,9 @@
 #include <linux/vmalloc.h>
 #include <linux/cpufreq.h>
 #include <linux/cpu_pm.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
 #include <linux/cpuhotplug.h>
+#endif
 #include <linux/netdevice.h>
 #include <net/netevent.h>
 #include <net/addrconf.h>

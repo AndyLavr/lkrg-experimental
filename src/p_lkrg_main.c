@@ -18,7 +18,9 @@
 #include "p_lkrg_main.h"
 
 unsigned int p_init_log_level = 1;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
 static enum cpuhp_state p_hot_cpus;
+#endif
 
 /*
  * Main entry point for the module - initialization.
