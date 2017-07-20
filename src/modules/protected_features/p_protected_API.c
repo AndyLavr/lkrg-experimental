@@ -18,6 +18,86 @@
 #include "../../p_lkrg_main.h"
 
 /*
+ * CAP_SYS_RAWIO API
+ */
+void p_protected_lower_caps(pid_t p_arg) {
+
+   struct task_struct *p_task_struct = pid_task(find_vpid(p_arg), PIDTYPE_PID);
+
+// STRONG_DEBUG
+#ifdef P_LKRG_DEBUG
+   p_print_log(P_LKRG_STRONG_DBG,
+          "Entering function <p_protected_lower_caps>\n");
+#endif
+
+   if (p_task_struct) {
+      struct cred *p_new = (struct cred *)p_task_struct->cred;
+
+      if (cap_raised(p_new->cap_effective, CAP_SYS_RAWIO)) {
+         cap_lower(p_new->cap_bset, CAP_SYS_RAWIO);
+         cap_lower(p_new->cap_permitted, CAP_SYS_RAWIO);
+         cap_lower(p_new->cap_effective, CAP_SYS_RAWIO);
+         cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
+//         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
+
+         p_new = (struct cred *)p_task_struct->real_cred;
+
+         cap_lower(p_new->cap_bset, CAP_SYS_RAWIO);
+         cap_lower(p_new->cap_permitted, CAP_SYS_RAWIO);
+         cap_lower(p_new->cap_effective, CAP_SYS_RAWIO);
+         cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
+//         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
+      }
+   }
+
+// STRONG_DEBUG
+#ifdef P_LKRG_DEBUG
+   p_print_log(P_LKRG_STRONG_DBG,
+          "Leaving function <p_protected_lower_caps>\n");
+#endif
+
+}
+
+void p_protected_raise_caps(pid_t p_arg) {
+
+   struct task_struct *p_task_struct = pid_task(find_vpid(p_arg), PIDTYPE_PID);
+
+// STRONG_DEBUG
+#ifdef P_LKRG_DEBUG
+   p_print_log(P_LKRG_STRONG_DBG,
+          "Entering function <p_protected_raise_caps>\n");
+#endif
+
+   if (p_task_struct) {
+      struct cred *p_new = (struct cred *)p_task_struct->cred;
+
+      if (!cap_raised(p_new->cap_effective, CAP_SYS_RAWIO)) {
+         cap_raise(p_new->cap_bset, CAP_SYS_RAWIO);
+         cap_raise(p_new->cap_permitted, CAP_SYS_RAWIO);
+         cap_raise(p_new->cap_effective, CAP_SYS_RAWIO);
+         cap_raise(p_new->cap_inheritable, CAP_SYS_RAWIO);
+//         cap_raise(p_new->cap_ambient, CAP_SYS_RAWIO);
+
+         p_new = (struct cred *)p_task_struct->real_cred;
+
+         cap_raise(p_new->cap_bset, CAP_SYS_RAWIO);
+         cap_raise(p_new->cap_permitted, CAP_SYS_RAWIO);
+         cap_raise(p_new->cap_effective, CAP_SYS_RAWIO);
+         cap_raise(p_new->cap_inheritable, CAP_SYS_RAWIO);
+//         cap_raise(p_new->cap_ambient, CAP_SYS_RAWIO);
+      }
+   }
+
+// STRONG_DEBUG
+#ifdef P_LKRG_DEBUG
+   p_print_log(P_LKRG_STRONG_DBG,
+          "Leaving function <p_protected_raise_caps>\n");
+#endif
+
+}
+
+
+/*
  * Protected PIDs API
  */
 int p_protect_process(pid_t p_arg) {
@@ -49,6 +129,7 @@ int p_protect_process(pid_t p_arg) {
    } else {
       p_print_log(P_LKRG_INFO,
                    "Inserting pid => %d\n", p_arg);
+      p_protected_raise_caps(p_arg);
    }
 
 p_protect_process_out:
@@ -82,6 +163,7 @@ int p_unprotect_process(pid_t p_arg) {
 
    p_rb_del_pid(&p_global_pids_root, p_tmp);
    p_print_log(P_LKRG_INFO, "Removing pid => %d\n", p_arg);
+   p_protected_lower_caps(p_arg);
 
 p_unprotect_process_out:
 

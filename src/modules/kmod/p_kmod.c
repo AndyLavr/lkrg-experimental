@@ -154,6 +154,7 @@ unsigned int p_count_modules_from_module_list(void) {
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_count_modules_from_module_list> (p_cnt => %d)\n",p_cnt);
 #endif
 
@@ -221,6 +222,7 @@ int p_list_from_module_list(p_module_list_mem *p_arg) {
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_list_from_module_list> (p_cnt => %d)\n",p_cnt);
 #endif
 
@@ -290,6 +292,7 @@ unsigned int p_count_modules_from_sysfs_kobj(void) {
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_count_modules_from_sysfs_kobj> (p_cnt => %d)\n",p_cnt);
 #endif
 
@@ -383,7 +386,11 @@ int p_list_from_sysfs_kobj(p_module_kobj_mem *p_arg) {
              p_arg[p_cnt].p_core_text_size,p_arg[p_cnt].p_mod_core_text_hash,
              p_arg[p_cnt].p_mk,p_arg[p_cnt].kobj.name,p_arg[p_cnt].kobj.parent,
              p_arg[p_cnt].kobj.kset,p_arg[p_cnt].kobj.ktype,p_arg[p_cnt].kobj.sd,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,11,0)
              p_arg[p_cnt].kobj.kref.refcount.counter,p_arg[p_cnt].kobj.kref.refcount.counter);
+#else
+             p_arg[p_cnt].kobj.kref.refcount.refs.counter,p_arg[p_cnt].kobj.kref.refcount.refs.counter);
+#endif
 #endif
 
       p_cnt++;
@@ -394,6 +401,7 @@ int p_list_from_sysfs_kobj(p_module_kobj_mem *p_arg) {
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_list_from_sysfs_kobj> (p_cnt => %d)\n",p_cnt);
 #endif
 

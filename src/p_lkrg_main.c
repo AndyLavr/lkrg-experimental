@@ -18,6 +18,7 @@
 #include "p_lkrg_main.h"
 
 unsigned int p_init_log_level = 1;
+static enum cpuhp_state p_hot_cpus;
 
 /*
  * Main entry point for the module - initialization.
@@ -83,6 +84,16 @@ static int __init p_lkrg_register(void) {
    cpu_notifier_register_begin();
    __register_hotcpu_notifier(&p_cpu_notifier);
    cpu_notifier_register_done();
+#else
+   if ( (p_hot_cpus = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+                         "x86/p_lkrg:online",
+                         p_cpu_online_action,
+                         p_cpu_dead_action)) < 0) {
+      p_print_log(P_LKRG_CRIT,
+             "Can't register hot CPU plug[in/out] handler! Exiting...\n");
+      p_ret = P_LKRG_HPCPU_ERROR;
+      goto p_main_error;
+   }
 #endif
 
    p_integrity_timer();
@@ -124,6 +135,8 @@ static void __exit p_lkrg_deregister(void) {
    cpu_notifier_register_begin();
    __unregister_hotcpu_notifier(&p_cpu_notifier);
    cpu_notifier_register_done();
+#else
+   cpuhp_remove_state_nocalls(p_hot_cpus);
 #endif
 
    p_deregister_module_notifier();

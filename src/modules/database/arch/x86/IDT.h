@@ -57,7 +57,7 @@ typedef struct p_idt_descriptor {
 typedef struct p_IDT_MSR_CRx_hash_mem {
 
    /*
-    * Some information about CPU to support hot-plugging
+    * Some information about CPU to support hot-plug[in/out]
     */
    int p_cpu_id;
    char p_cpu_online; // 1 - online, 0 - offline

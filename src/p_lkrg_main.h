@@ -32,6 +32,7 @@
 #include <linux/vmalloc.h>
 #include <linux/cpufreq.h>
 #include <linux/cpu_pm.h>
+#include <linux/cpuhotplug.h>
 #include <linux/netdevice.h>
 #include <net/netevent.h>
 #include <net/addrconf.h>

@@ -27,7 +27,7 @@
    list_entry((void *)*(long *)(*(long*)x),struct module, list);       \
 })
 
-#define P_MODULE_BUFFER_RACE 2
+#define P_MODULE_BUFFER_RACE 5
 
 typedef struct p_module_list_mem {
 

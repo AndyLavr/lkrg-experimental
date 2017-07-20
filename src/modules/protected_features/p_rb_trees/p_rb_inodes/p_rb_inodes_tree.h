@@ -209,14 +209,18 @@ static inline void p_dump_inode_ops(const struct inode_operations *p_arg) {
    p_print_log(P_LKRG_DBG, "mknod => 0x%p\n",p_arg->mknod);
    p_print_log(P_LKRG_DBG, "rename => 0x%p\n",p_arg->rename);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0)
    p_print_log(P_LKRG_DBG, "rename2 => 0x%p\n",p_arg->rename2);
+#endif
 #endif
    p_print_log(P_LKRG_DBG, "setattr => 0x%p\n",p_arg->setattr);
    p_print_log(P_LKRG_DBG, "getattr => 0x%p\n",p_arg->getattr);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0)
    p_print_log(P_LKRG_DBG, "setxattr => 0x%p\n",p_arg->setxattr);
    p_print_log(P_LKRG_DBG, "getxattr => 0x%p\n",p_arg->getxattr);
-   p_print_log(P_LKRG_DBG, "listxattr => 0x%p\n",p_arg->listxattr);
    p_print_log(P_LKRG_DBG, "removexattr => 0x%p\n",p_arg->removexattr);
+#endif
+   p_print_log(P_LKRG_DBG, "listxattr => 0x%p\n",p_arg->listxattr);
    p_print_log(P_LKRG_DBG, "fiemap => 0x%p\n",p_arg->fiemap);
    p_print_log(P_LKRG_DBG, "update_time => 0x%p\n",p_arg->update_time);
    p_print_log(P_LKRG_DBG, "atomic_open => 0x%p\n",p_arg->atomic_open);
@@ -245,7 +249,9 @@ static inline void p_dump_file_ops(const struct file_operations *p_arg) {
    p_print_log(P_LKRG_DBG, "flush => 0x%p\n",p_arg->flush);
    p_print_log(P_LKRG_DBG, "release => 0x%p\n",p_arg->release);
    p_print_log(P_LKRG_DBG, "fsync => 0x%p\n",p_arg->fsync);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0)
    p_print_log(P_LKRG_DBG, "aio_fsync => 0x%p\n",p_arg->aio_fsync);
+#endif
    p_print_log(P_LKRG_DBG, "fasync => 0x%p\n",p_arg->fasync);
    p_print_log(P_LKRG_DBG, "lock => 0x%p\n",p_arg->lock);
    p_print_log(P_LKRG_DBG, "sendpage => 0x%p\n",p_arg->sendpage);

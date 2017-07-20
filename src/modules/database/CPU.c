@@ -27,10 +27,11 @@
  *     => IDT base and/or entire table
  *     => MSRs
  *
- *  - Since Linux 4.10 there isn't CPU_[ONLIE/DEAD] notifiers :(
- *    Hot plugging CPU monitor is no longer supported. More information
+ *  - Since Linux 4.10 there isn't CPU_[ONLINE/DEAD] notifiers :(
+ *    Hot CPU plug[in/out] notification logic has completaly changed. More information
  *    Can be found here:
  *     => https://patchwork.kernel.org/patch/9448577/
+ *    On new kernel (4.10.+) we use modern hot CPU plug[in/out] logic.
  *
  * Timeline:
  *  - Created: 28.XI.2015
@@ -66,6 +67,7 @@ void p_get_cpus(p_cpu_info *p_arg) {
 
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "<p_get_cpus> online[%d] possible[%d] present[%d] active[%d] nr_cpu_ids[%d]\n",
           p_arg->online_CPUs,p_arg->possible_CPUs,p_arg->present_CPUs,p_arg->active_CPUs,
           p_arg->p_nr_cpu_ids);
@@ -76,7 +78,6 @@ void p_get_cpus(p_cpu_info *p_arg) {
    p_print_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_get_cpus>\n");
 #endif
-
 
 }
 
@@ -171,14 +172,17 @@ int p_cpu_callback(struct notifier_block *p_block, unsigned long p_action, void 
 
    return NOTIFY_OK;
 }
+#endif
 
-void p_cpu_online_action(unsigned int p_cpu) {
+
+int p_cpu_online_action(unsigned int p_cpu) {
 
    int tmp_online_CPUs = p_db.p_cpu.online_CPUs;
 
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Entering function <p_cpu_online_action>\n");
 #endif
 
@@ -197,6 +201,9 @@ void p_cpu_online_action(unsigned int p_cpu) {
 //   spin_lock_irqsave(&p_db_lock,p_db_flags);
 
    p_get_cpus(&p_db.p_cpu);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
+   p_db.p_cpu.active_CPUs++;
+#endif
    p_db.p_IDT_MSR_CRx_hashes = hash_from_CPU_data(p_db.p_IDT_MSR_CRx_array);
 
    /* UP kernel became SMP one! we need to do more work ;/ */
@@ -254,18 +261,21 @@ void p_cpu_online_action(unsigned int p_cpu) {
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_cpu_online_action>\n");
 #endif
 
+   return 0x0;
 }
 
-void p_cpu_dead_action(unsigned int p_cpu) {
+int p_cpu_dead_action(unsigned int p_cpu) {
 
    int tmp_online_CPUs = p_db.p_cpu.online_CPUs;
 
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Entering function <p_cpu_dead_action>\n");
 #endif
 
@@ -286,6 +296,9 @@ void p_cpu_dead_action(unsigned int p_cpu) {
 //   spin_lock_irqsave(&p_db_lock,p_db_flags);
 
    p_get_cpus(&p_db.p_cpu);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,10,0)
+   p_db.p_cpu.online_CPUs--;
+#endif
    p_db.p_IDT_MSR_CRx_hashes = hash_from_CPU_data(p_db.p_IDT_MSR_CRx_array);
 
    /*
@@ -349,11 +362,14 @@ void p_cpu_dead_action(unsigned int p_cpu) {
 // STRONG_DEBUG
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_STRONG_DBG,
+//   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_cpu_dead_action>\n");
 #endif
 
+   return 0x0;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 struct notifier_block p_cpu_notifier =
 {
    .notifier_call = p_cpu_callback,

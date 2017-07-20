@@ -35,9 +35,11 @@
 // Can't generate database - hashes
 #define P_LKRG_DATABASE_ERROR     -102
 
-// Can't generate database - hashes
+// Can't initialize protected features
 #define P_LKRG_PROTECTED_ERROR    -103
 
+// Can't register hot CPU plug[in/out] handler
+#define P_LKRG_HPCPU_ERROR        -104
 
 // Enable hash from IOMMU table? - not recommended!
 // By default disabled

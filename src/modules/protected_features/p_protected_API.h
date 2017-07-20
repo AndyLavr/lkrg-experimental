@@ -53,6 +53,9 @@ struct p_inode_work_struct {
 
 };
 
+void p_protected_lower_caps(pid_t p_arg);
+void p_protected_raise_caps(pid_t p_arg);
+
 int p_protect_process(pid_t p_arg);
 int p_unprotect_process(pid_t p_arg);
 int p_is_protected_pid(pid_t p_arg);
