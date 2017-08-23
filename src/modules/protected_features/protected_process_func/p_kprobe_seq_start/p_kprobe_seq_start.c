@@ -49,17 +49,12 @@ static struct kretprobe p_kprobe_seq_start_kretprobe = {
 
 int p_kprobe_seq_start_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_kprobe_seq_start_entry>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "p_kprobe_seq_start_entry: comm[%s] Pid:%d => Arguments:"
           "[seq_file:%lx pos:0x%lx]\n",
           current->comm,current->pid,p_regs->di,p_regs->si);
-#endif
-#endif
 
    if (p_is_protected_pid(current->pid)) {
       goto p_kprobe_seq_start_entry_out;
@@ -76,13 +71,8 @@ int p_kprobe_seq_start_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_
 
 p_kprobe_seq_start_entry_out:
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_kprobe_seq_start_entry>\n");
-#endif
-#endif
 
    /* A dump_stack() here will give a stack backtrace */
    return 0x0;
@@ -100,10 +90,8 @@ int p_install_kprobe_seq_start_hook(void) {
    int p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_install_kprobe_seq_start_hook>\n");
-#endif
 
    if ( (p_ret = register_kretprobe(&p_kprobe_seq_start_kretprobe)) < 0) {
       p_print_log(P_LKRG_ERR, "[kretprobe] register_kretprobe() failed! [err=%d]\n",p_ret);
@@ -118,10 +106,8 @@ int p_install_kprobe_seq_start_hook(void) {
 p_install_kprobe_seq_start_hook_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_install_kprobe_seq_start_hook> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -130,10 +116,8 @@ p_install_kprobe_seq_start_hook_out:
 void p_uninstall_kprobe_seq_start_hook(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_uninstall_kprobe_seq_start_hook>\n");
-#endif
 
    if (!p_kprobe_seq_start_kretprobe_state) {
       p_print_log(P_LKRG_INFO, "[kretprobe] <%s> at 0x%p is NOT installed\n",
@@ -146,9 +130,6 @@ void p_uninstall_kprobe_seq_start_hook(void) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_uninstall_kprobe_seq_start_hook>\n");
-#endif
-
 }

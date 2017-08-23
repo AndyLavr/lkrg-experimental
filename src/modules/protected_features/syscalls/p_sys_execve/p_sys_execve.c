@@ -46,13 +46,8 @@ struct inode *p_get_inode_from_task(struct task_struct *p_arg) {
    struct mm_struct *p_mm;
    struct inode *p_inode = NULL;
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_get_inode_from_task>\n");
-#endif
-#endif
 
    if (!p_arg) {
       goto p_get_inode_from_task_out;
@@ -83,13 +78,8 @@ struct inode *p_get_inode_from_task(struct task_struct *p_arg) {
 
 p_get_inode_from_task_out:
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Leaving function <p_get_inode_from_task> (p_inode => 0x%p)\n",p_inode);
-#endif
-#endif
 
    return p_inode;
 }
@@ -104,18 +94,14 @@ int p_sys_execve_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
 
    struct inode *p_inode;
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_sys_execve_ret>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
-          "p_sys_execve_ret: returned value => %ld comm[%s] Pid:%d inode[%ld]\n",
-                  p_regs->ax,current->comm,current->pid,current->nameidata->inode->i_ino);
-#endif
-#endif
 
    p_inode = p_get_inode_from_task(current);
+
+   p_debug_kprobe_log(
+          "p_sys_execve_ret: returned value => %ld comm[%s] Pid:%d inode[%ld]\n",
+           p_regs->ax,current->comm,current->pid,p_inode->i_ino);
 
    if (p_inode) {
       if (p_is_protected_inode(p_inode)) {
@@ -126,13 +112,8 @@ int p_sys_execve_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
       }
    }
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Leaving function <p_sys_execve_ret>\n");
-#endif
-#endif
 
    return 0x0;
 }
@@ -142,10 +123,8 @@ int p_install_sys_execve_hook(void) {
 
    int p_ret;
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_install_sys_execve_hook>\n");
-#endif
 
    if ( (p_ret = register_kretprobe(&p_sys_execve_kretprobe)) < 0) {
       p_print_log(P_LKRG_ERR, "[kretprobe] register_kretprobe() failed! [err=%d]\n",p_ret);
@@ -159,10 +138,8 @@ int p_install_sys_execve_hook(void) {
 
 p_uninstall_sys_execve_hook_out:
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_install_sys_execve_hook> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -170,10 +147,8 @@ p_uninstall_sys_execve_hook_out:
 
 void p_uninstall_sys_execve_hook(void) {
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_uninstall_sys_execve_hook>\n");
-#endif
 
    if (!p_sys_execve_kretprobe_state) {
       p_print_log(P_LKRG_INFO, "[kretprobe] <%s> at 0x%p is NOT installed\n",
@@ -185,9 +160,6 @@ void p_uninstall_sys_execve_hook(void) {
       p_sys_execve_kretprobe_state = 0x0;
    }
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_uninstall_sys_execve_hook>\n");
-#endif
-
 }

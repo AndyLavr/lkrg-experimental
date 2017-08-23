@@ -29,10 +29,8 @@ struct p_protected_pid *p_rb_find_pid(struct rb_root *p_root, pid_t p_arg) {
    struct p_protected_pid *p_ret = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_find_pid>\n");
-#endif
 
    while(p_node) {
       p_struct = rb_entry(p_node, struct p_protected_pid, p_rb);
@@ -50,10 +48,8 @@ struct p_protected_pid *p_rb_find_pid(struct rb_root *p_root, pid_t p_arg) {
 p_rb_find_pid_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_find_pid> (p_ret => 0x%p)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -67,10 +63,8 @@ struct p_protected_pid *p_rb_add_pid(struct rb_root *p_root, pid_t p_arg, struct
    struct p_protected_pid *p_ret = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_add_pid>\n");
-#endif
 
    while(*p_node) {
       p_parent = *p_node;
@@ -93,10 +87,8 @@ struct p_protected_pid *p_rb_add_pid(struct rb_root *p_root, pid_t p_arg, struct
 p_rb_add_pid_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_add_pid> (p_ret => 0x%p)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -105,20 +97,15 @@ p_rb_add_pid_out:
 void p_rb_del_pid(struct rb_root *p_root, struct p_protected_pid *p_source) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_del_pid>\n");
-#endif
 
    rb_erase(&p_source->p_rb, p_root);       // Erase the node
    p_free_pids(p_source);                   // Free the memory
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_del_pid>\n");
-#endif
-
 }
 
 static void p_pids_cache_init(void *p_arg) {
@@ -126,19 +113,14 @@ static void p_pids_cache_init(void *p_arg) {
    struct p_protected_pid *p_struct = p_arg;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_pids_cache_init>\n");
-#endif
 
    memset(p_struct, 0x0, sizeof(struct p_protected_pid));
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_pids_cache_init>\n");
-#endif
-
 }
 
 int p_init_rb_pids(void) {
@@ -146,10 +128,8 @@ int p_init_rb_pids(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_init_rb_pids>\n");
-#endif
 
    if ( (p_pids_cache = kmem_cache_create("protected_pids", sizeof(struct p_protected_pid),
                                            0x0, SLAB_HWCACHE_ALIGN, p_pids_cache_init)) == NULL) {
@@ -158,10 +138,8 @@ int p_init_rb_pids(void) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_init_rb_pids> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -172,10 +150,8 @@ void p_delete_rb_pids(void) {
    struct p_protected_pid *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_delete_rb_pids>\n");
-#endif
 
    for (p_node = rb_first(&p_global_pids_root); p_node; p_node = rb_next(p_node)) {
       p_tmp = rb_entry(p_node, struct p_protected_pid, p_rb);
@@ -185,9 +161,6 @@ void p_delete_rb_pids(void) {
    kmem_cache_destroy(p_pids_cache);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_delete_rb_pids>\n");
-#endif
-
 }

@@ -27,7 +27,7 @@ do {                                                                            
    struct rb_node *p_node;                                                                               \
                                                                                                          \
    for (p_node = rb_first(&p_global_p_inodes_root); p_node; p_node = rb_next(p_node))                    \
-      p_print_log(P_LKRG_DBG, "inode => 0x%p\n",                                                         \
+      p_debug_log(P_LKRG_DBG, "inode => 0x%p\n",                                                         \
                                           rb_entry(p_node, struct p_protected_p_inode, p_rb)->p_inode);  \
 } while(0);
 #endif
@@ -54,10 +54,8 @@ extern struct rb_root p_global_p_inodes_root;
 static inline void p_rb_init_p_inode_node(struct rb_node *rb) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_init_p_inode_node>\n");
-#endif
 
    rb->__rb_parent_color = 0;
    rb->rb_right = NULL;
@@ -65,19 +63,15 @@ static inline void p_rb_init_p_inode_node(struct rb_node *rb) {
    RB_CLEAR_NODE(rb);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_init_p_inode_node>\n");
-#endif
 }
 
 static inline void p_iget_parent(struct inode *p_inode) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_iget_parent>\n");
-#endif
 
    /* Increment reference counter */
    atomic_inc(&p_inode->i_count);
@@ -87,20 +81,15 @@ static inline void p_iget_parent(struct inode *p_inode) {
 //   __mark_inode_dirty(p_inode, I_DIRTY_SYNC);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_iget_parent>\n");
-#endif
-
 }
 
 static inline void p_iput_parent(struct inode *p_inode) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_iput_parent>\n");
-#endif
 
    /* Decrement reference counter */
    iput(p_inode);
@@ -110,11 +99,8 @@ static inline void p_iput_parent(struct inode *p_inode) {
 //   __mark_inode_dirty(p_inode, I_DIRTY_SYNC);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_iput_parent>\n");
-#endif
-
 }
 
 

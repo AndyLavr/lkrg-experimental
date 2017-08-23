@@ -37,10 +37,8 @@ static void p_module_notifier_wrapper(unsigned long p_event, struct module *p_km
    unsigned long *p_addr = (unsigned long *)p_kmod->init;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_module_notifier_wrapper>\n");
-#endif
 
    if (p_lkrg_global_ctrl.p_block_modules) {
 
@@ -112,10 +110,8 @@ static void p_module_notifier_wrapper(unsigned long p_event, struct module *p_km
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_module_notifier_wrapper>\n");
-#endif
 
    return;
 }
@@ -146,23 +142,20 @@ static int p_module_event_notifier(struct notifier_block *p_this, unsigned long 
 #endif
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
                "[%ld | %s] "
                "Entering function <p_module_event_notifier> "
                "m[0x%p] hd[0x%p] s[0x%p] n[0x%p]\n",
                p_event,p_mod_strings[p_event],p_tmp,p_tmp->holders_dir,
                p_tmp->sect_attrs,p_tmp->notes_attrs);
-#endif
 
    /* Inform validation routine about active module activities... */
    mutex_lock(&p_module_activity);
    p_module_activity_ptr = p_tmp;
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "<p_module_event_notifier> !! Module activity detected [<%s>] %lu: 0x%p\n",p_mod_strings[p_event],p_event,p_kmod);
-#endif
 
    /*
     * If module going away, we need to rebuild our database anyway
@@ -332,10 +325,8 @@ p_module_event_notifier_activity_out:
    mutex_unlock(&p_module_activity);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_module_event_notifier>\n");
-#endif
 
    return NOTIFY_DONE;
 }
@@ -344,11 +335,8 @@ p_module_event_notifier_activity_out:
 void p_register_module_notifier(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_register_module_notifier> Registering module's noitifier routine\n");
-#endif
-
 
    register_module_notifier(&p_module_block_notifier);
 

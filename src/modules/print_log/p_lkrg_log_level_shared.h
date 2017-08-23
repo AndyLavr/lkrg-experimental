@@ -24,15 +24,15 @@
  */
 
 // Do we want to provide debug information?
-//#define P_LKRG_DEBUG
+#define P_LKRG_DEBUG
 
 // Debug every time we enter/exit notifiers function?
 // not recommended - will be too noisy for some notifiers! :)
-// #define P_LKRG_NOTIFIER_DBG
+//#define P_LKRG_NOTIFIER_DBG
 
 // Debug every time we enter/exit *kprobed* function?
 // not recommended - will be very noisy...
-// #define P_LKRG_STRONG_KPROBE_DEBUG
+//#define P_LKRG_STRONG_KPROBE_DEBUG
 
 enum P_LOG_LEVELS {
 

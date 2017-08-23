@@ -38,10 +38,8 @@ u64 p_read_msr(/*int p_cpu, */u32 p_arg) {
 //    int p_err;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_read_msr>\n");
-#endif
 
    p_low = p_high = p_val = 0x0;
 
@@ -52,10 +50,8 @@ u64 p_read_msr(/*int p_cpu, */u32 p_arg) {
 // Sometime may generate OOPS ;/
 /*
    if ( (p_err = rdmsr_safe_on_cpu(p_cpu,p_arg,&p_low,&p_high))) {
-#ifdef P_LKRG_STRONG_DEBUG
-      printk(P_LKRG_PRINT P_LKRG_SIGNATURE
+      p_debug_log(P_LKRG_STRONG_DBG,
              "<p_read_msr> rdmsr_safe_on_cpu() error! - shouldn't happend [err=0x%x]!\n",p_err);
-#endif
       return 0x0;
    }
    p_val = (u64 )p_high << 32 | p_low;
@@ -63,16 +59,13 @@ u64 p_read_msr(/*int p_cpu, */u32 p_arg) {
 
    p_val = P_MSR_ASM_RET(p_val,p_low,p_high);
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "<p_read_msr[%d]> MSR arg[0x%x] value[%llx]\n",smp_processor_id(),p_arg,p_val);
-#endif
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_read_msr>\n");
-#endif
 
     return p_val;
 }
@@ -96,10 +89,8 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    int p_curr_cpu = 0xFFFFFFFF;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_dump_IDT_MSR_CRx>\n");
-#endif
 
    /*
     * Get ID and lock - no preemtion.
@@ -143,20 +134,20 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    p_arg[p_curr_cpu].p_hash = p_super_fast_hash((unsigned char *)p_arg[p_curr_cpu].p_base,
                                                 (unsigned int)sizeof(p_idt_descriptor) * P_X86_MAX_IDT);
 
-
+// DEBUG
 #ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] IDT => base[0x%lx] size[0x%x] hash[0x%x]\n",
           p_arg[p_curr_cpu].p_cpu_id,p_arg[p_curr_cpu].p_base,p_arg[p_curr_cpu].p_size,p_arg[p_curr_cpu].p_hash);
 
    do {
       p_idt_descriptor *p_test;
 
-      p_print_log(P_LKRG_DBG,
+      p_debug_log(P_LKRG_DBG,
              "Reading IDT 1 to verify data:");
       p_test = (p_idt_descriptor *)(p_arg[p_curr_cpu].p_base+(sizeof(p_idt_descriptor)*1));
 #ifdef CONFIG_X86_64
-      p_print_log(P_LKRG_DBG,
+      p_debug_log(P_LKRG_DBG,
                 "off_low[0x%x]"
                 "sel[0x%x]"
                 "none[0x%x]"
@@ -173,7 +164,7 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
                 p_test->padding
                 );
 #else
-      p_print_log(P_LKRG_DBG,
+      p_debug_log(P_LKRG_DBG,
                 "off_low[0x%x]"
                 "sel[0x%x]"
                 "none[0x%x]"
@@ -206,11 +197,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_IA32_SYSENTER_CS[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_IA32_SYSENTER_CS,&p_arg[p_curr_cpu].p_MSR_IA32_SYSENTER_CS);
-#endif
 
 
    /* MSR_IA32_SYSENTER_ESP */
@@ -224,11 +213,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_IA32_SYSENTER_ESP[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_IA32_SYSENTER_ESP,&p_arg[p_curr_cpu].p_MSR_IA32_SYSENTER_ESP);
-#endif
 
 
    /* MSR_IA32_SYSENTER_EIP */
@@ -242,11 +229,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_IA32_SYSENTER_EIP[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_IA32_SYSENTER_EIP,&p_arg[p_curr_cpu].p_MSR_IA32_SYSENTER_EIP);
-#endif
 
 
    /* MSR_IA32_CR_PAT */
@@ -260,11 +245,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_IA32_CR_PAT[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_IA32_CR_PAT,&p_arg[p_curr_cpu].p_MSR_IA32_CR_PAT);
-#endif
 
 
    /* MSR_IA32_APICBASE */
@@ -278,11 +261,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_IA32_APICBASE[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_IA32_APICBASE,&p_arg[p_curr_cpu].p_MSR_IA32_APICBASE);
-#endif
 
 
    /* MSR_EFER */
@@ -296,11 +277,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_EFER[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_EFER,&p_arg[p_curr_cpu].p_MSR_EFER);
-#endif
 
 
    /* MSR_STAR */
@@ -314,11 +293,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_STAR[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_STAR,&p_arg[p_curr_cpu].p_MSR_STAR);
-#endif
 
 
    /* MSR_LSTAR */
@@ -332,11 +309,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_LSTAR[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_LSTAR,&p_arg[p_curr_cpu].p_MSR_LSTAR);
-#endif
 
 
    /* MSR_CSTAR */
@@ -350,11 +325,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_CSTAR[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_CSTAR,&p_arg[p_curr_cpu].p_MSR_CSTAR);
-#endif
 
 
    /* MSR_SYSCALL_MASK */
@@ -368,11 +341,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_SYSCALL_MASK[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_SYSCALL_MASK,&p_arg[p_curr_cpu].p_MSR_SYSCALL_MASK);
-#endif
 
 
    /* p_MSR_KERNEL_GS_BASE */
@@ -387,11 +358,9 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_dump_IDT_MSR> CPU:[%d] MSR: MSR_KERNEL_GS_BASE[0x%llx] address in db[%p]\n",
           p_curr_cpu,p_arg[p_curr_cpu].p_MSR_KERNEL_GS_BASE,&p_arg[p_curr_cpu].p_MSR_KERNEL_GS_BASE);
-#endif
 */
 
    /*
@@ -407,9 +376,7 @@ void p_dump_IDT_MSR_CRx(void *_p_arg) {
 
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_dump_IDT_MSR_CRx>\n");
-#endif
 
 }

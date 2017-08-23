@@ -37,24 +37,20 @@ long get_kallsyms_address(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <get_kallsyms_address>\n");
-#endif
 
    if ( (p_tmp = kallsyms_on_each_symbol(p_lookup_syms_hack,NULL)) == 0x0) {
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_DBG,
+// DEBUG
+      p_debug_log(P_LKRG_DBG,
              "kallsyms_on_each_symbol error :(\n");
-#endif
       p_ret = P_LKRG_GENERAL_ERROR;
       goto get_kallsyms_address_out;
    }
 
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_DBG,
+// DEBUG
+      p_debug_log(P_LKRG_DBG,
              "kallsyms_on_each_symbol() returned => 0x%x\n",p_tmp);
-#endif
 
 #ifdef CONFIG_X86_64
    p_kallsyms_lookup_name = (unsigned long (*)(const char*)) (0xFFFFFFFF00000000 | p_tmp);
@@ -65,10 +61,8 @@ long get_kallsyms_address(void) {
 get_kallsyms_address_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <get_kallsyms_address> (p_ret => %d)\n",p_ret);
-#endif
 
    return P_LKRG_SUCCESS;
 }

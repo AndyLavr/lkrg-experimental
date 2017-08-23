@@ -25,10 +25,8 @@ void p_protected_lower_caps(pid_t p_arg) {
    struct task_struct *p_task_struct = pid_task(find_vpid(p_arg), PIDTYPE_PID);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_protected_lower_caps>\n");
-#endif
 
    if (p_task_struct) {
       struct cred *p_new = (struct cred *)p_task_struct->cred;
@@ -51,11 +49,8 @@ void p_protected_lower_caps(pid_t p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protected_lower_caps>\n");
-#endif
-
 }
 
 void p_protected_raise_caps(pid_t p_arg) {
@@ -63,10 +58,8 @@ void p_protected_raise_caps(pid_t p_arg) {
    struct task_struct *p_task_struct = pid_task(find_vpid(p_arg), PIDTYPE_PID);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_protected_raise_caps>\n");
-#endif
 
    if (p_task_struct) {
       struct cred *p_new = (struct cred *)p_task_struct->cred;
@@ -89,11 +82,8 @@ void p_protected_raise_caps(pid_t p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protected_raise_caps>\n");
-#endif
-
 }
 
 
@@ -106,10 +96,8 @@ int p_protect_process(pid_t p_arg) {
    struct p_protected_pid *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_protect_process>\n");
-#endif
 
    if ( (p_tmp = p_alloc_pids()) == NULL) {
       p_print_log(P_LKRG_ERR,
@@ -135,10 +123,8 @@ int p_protect_process(pid_t p_arg) {
 p_protect_process_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protect_process> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -150,10 +136,8 @@ int p_unprotect_process(pid_t p_arg) {
    struct p_protected_pid *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_unprotect_process>\n");
-#endif
 
    if ( (p_tmp = p_rb_find_pid(&p_global_pids_root, p_arg)) == NULL) {
       // This process is not on the list!
@@ -168,10 +152,8 @@ int p_unprotect_process(pid_t p_arg) {
 p_unprotect_process_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_unprotect_process> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -182,18 +164,14 @@ inline int p_is_protected_pid(pid_t p_arg) {
    register int p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_is_protected_pid>\n");
-#endif
 
    p_ret = p_rb_find_pid(&p_global_pids_root, p_arg) ? 1 : 0;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_is_protected_pid> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -203,10 +181,8 @@ inline int p_is_protected_pid(pid_t p_arg) {
 inline void p_safe_file_func(struct p_protected_inode *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_safe_file_func>\n");
-#endif
 
    /* struct inode_operations */
    p_arg->p_inode_orig = p_arg->p_inode->i_op;
@@ -217,28 +193,21 @@ inline void p_safe_file_func(struct p_protected_inode *p_arg) {
 //   memcpy(&p_arg->p_file_new,p_arg->p_file_orig,sizeof(struct file_operations));
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_safe_file_func>\n");
-#endif
-
 }
 
 inline void p_hook_file_func(struct p_protected_inode *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_hook_file_func>\n");
-#endif
 
    if (p_arg->p_opt == P_PROTECTED_FILES_OPT_FILE) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
              " => Protected Files mode!\n");
-#endif
 
       /*
        * We can hook i_op and f_op function pointers.
@@ -250,10 +219,8 @@ inline void p_hook_file_func(struct p_protected_inode *p_arg) {
    } else if (p_arg->p_opt == P_PROTECTED_FILES_OPT_LOGS) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
              " => Protected Logs mode!\n");
-#endif
 
       p_iget_logs(p_arg->p_inode);
 
@@ -268,20 +235,15 @@ inline void p_hook_file_func(struct p_protected_inode *p_arg) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_hook_file_func>\n");
-#endif
-
 }
 
 inline void p_restore_file_func(struct p_protected_inode *p_prot, struct inode *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_restore_file_func>\n");
-#endif
 
    if (p_prot->p_opt == P_PROTECTED_FILES_OPT_FILE) {
 
@@ -307,11 +269,8 @@ inline void p_restore_file_func(struct p_protected_inode *p_prot, struct inode *
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_restore_file_func>\n");
-#endif
-
 }
 
 
@@ -319,10 +278,8 @@ inline void p_restore_file_func(struct p_protected_inode *p_prot, struct inode *
 inline void p_safe_p_file_func(struct p_protected_p_inode *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_safe_p_file_func>\n");
-#endif
 
    /* struct inode_operations */
    p_arg->p_inode_orig = p_arg->p_inode->i_op;
@@ -333,20 +290,15 @@ inline void p_safe_p_file_func(struct p_protected_p_inode *p_arg) {
 //   memcpy(&p_arg->p_file_new,p_arg->p_file_orig,sizeof(struct file_operations));
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_safe_p_file_func>\n");
-#endif
-
 }
 
 inline void p_hook_p_file_func(struct p_protected_p_inode *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_hook_p_file_func>\n");
-#endif
 
    /*
     * We can hook i_op and f_op function pointers.
@@ -356,20 +308,15 @@ inline void p_hook_p_file_func(struct p_protected_p_inode *p_arg) {
    p_iget_parent(p_arg->p_inode);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_hook_p_file_func>\n");
-#endif
-
 }
 
 inline void p_restore_p_file_func(struct p_protected_p_inode *p_prot, struct inode *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_restore_p_file_func>\n");
-#endif
 
    /* struct inode_operations */
 //   p_arg->i_op = p_prot->p_inode_orig;
@@ -379,11 +326,8 @@ inline void p_restore_p_file_func(struct p_protected_p_inode *p_prot, struct ino
    p_iput_parent(p_arg);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_restore_p_file_func>\n");
-#endif
-
 }
 
 
@@ -396,10 +340,8 @@ int p_protect_inode(struct inode *p_inode, struct inode *p_parent_inode, unsigne
    struct p_protected_inode *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protect_inode>\n");
-#endif
 
    if ( (p_tmp = p_alloc_inodes()) == NULL) {
       p_print_log(P_LKRG_INFO, "p_alloc_inodes() returned NULL for inode 0x%p :(\n",p_inode);
@@ -430,10 +372,8 @@ int p_protect_inode(struct inode *p_inode, struct inode *p_parent_inode, unsigne
 p_protect_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protect_inode> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -444,10 +384,8 @@ int p_unprotect_inode(struct inode *p_arg, unsigned int p_opt) {
    struct p_protected_inode *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_unprotect_inode>\n");
-#endif
 
    if ( (p_tmp = p_rb_find_inode(&p_global_inodes_root, p_arg)) == NULL) {
       // This inode is not on the list!
@@ -473,10 +411,8 @@ int p_unprotect_inode(struct inode *p_arg, unsigned int p_opt) {
 p_unprotect_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_unprotect_inode> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -486,18 +422,14 @@ int p_is_protected_inode(struct inode *p_arg) {
    register int p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_is_protected_inode>\n");
-#endif
 
    p_ret = p_rb_find_inode(&p_global_inodes_root, p_arg) ? 1 : 0;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_is_protected_inode> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -513,10 +445,8 @@ int p_protect_p_inode(struct inode *p_inode) {
    struct p_protected_p_inode *p_tmp = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protect_p_inode>\n");
-#endif
 
    if ( (p_tmp = p_is_protected_p_inode(p_inode)) != NULL) {
       p_tmp->p_num++;
@@ -551,10 +481,8 @@ int p_protect_p_inode(struct inode *p_inode) {
 p_protect_p_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protect_p_inode> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -565,10 +493,8 @@ int p_unprotect_p_inode(struct inode *p_arg) {
    struct p_protected_p_inode *p_tmp = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_unprotect_p_inode>\n");
-#endif
 
    if ( (p_tmp = p_is_protected_p_inode(p_arg)) == NULL) {
       // This inode is not on the list!
@@ -590,10 +516,8 @@ int p_unprotect_p_inode(struct inode *p_arg) {
 p_unprotect_p_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_unprotect_p_inode> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -603,18 +527,14 @@ struct p_protected_p_inode *p_is_protected_p_inode(struct inode *p_arg) {
    register struct p_protected_p_inode *p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_is_protected_p_inode>\n");
-#endif
 
    p_ret = p_rb_find_p_inode(&p_global_p_inodes_root, p_arg);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_is_protected_p_inode> (p_ret => 0x%p)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -626,15 +546,13 @@ int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_get_inode>\n");
-#endif
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "Trying to resolve [%s]\n",p_arg);
-#endif
+
    if ( (p_ret = kern_path(p_arg, LOOKUP_FOLLOW, &p_path)) != P_LKRG_SUCCESS) {
       p_print_log(P_LKRG_ERR,
              "[kern_path] Can\'t resolve filename path :(");
@@ -642,14 +560,13 @@ int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent
       goto p_get_inode_out;
    }
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "p_path.dentry->d_inode[0x%p] p_path.dentry->d_parent[0x%p]\n",
                                    p_path.dentry->d_inode,p_path.dentry->d_parent);
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "p_path.dentry->d_inode[0x%p] d_parent->d_inode[0x%p]\n",
                                    p_path.dentry->d_inode,p_path.dentry->d_parent->d_inode);
-#endif
 
    *p_out_inode = p_path.dentry->d_inode;
    *p_parent_out_inode = p_path.dentry->d_parent->d_inode;
@@ -658,10 +575,8 @@ int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent
 p_get_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_get_inode> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -673,13 +588,11 @@ void p_offload_protected_inode(unsigned int p_protected_files, unsigned long p_i
    struct p_inode_work_struct *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_protected_inode>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "p_protected_files[%d] p_inode[%ld] p_path_val[0x%p]\n",
           p_protected_files,p_inode,p_path_val);
-#endif
 
    /*
     * __GFP_NOFAIL flag will always generate slowpath warn because developers
@@ -706,10 +619,8 @@ void p_offload_protected_inode(unsigned int p_protected_files, unsigned long p_i
 p_offload_protected_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_offload_protected_inode>\n");
-#endif
 
    return;
 }
@@ -722,10 +633,8 @@ void p_offload_protected_inode_run(struct work_struct *p_arg) {
    struct inode *p_parent_inode = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_protected_inode_run>\n");
-#endif
 
    if (!p_tmp->p_path_val) {
       p_print_log(P_LKRG_CRIT,
@@ -792,10 +701,8 @@ p_offload_protected_inode_run_out:
    kzfree(p_tmp);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_offload_protected_inode_run>\n");
-#endif
 
 }
 /* END */
@@ -808,10 +715,8 @@ int p_protected_features_init(void) {
    struct file *p_filep = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protected_features_init>\n");
-#endif
 
    if (p_init_rb_pids()) {
       p_print_log(P_LKRG_ERR,
@@ -1008,10 +913,8 @@ p_protected_features_init_err:
 p_protected_features_init_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protected_features_init> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -1019,10 +922,8 @@ p_protected_features_init_out:
 void p_protected_features_exit(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_protected_features_exit>\n");
-#endif
 
    p_uninstall_sys_ptrace_hook();
    p_uninstall_sys_execve_hook();
@@ -1053,9 +954,6 @@ void p_protected_features_exit(void) {
    p_print_log(P_LKRG_INFO, "kmem_cache \"protected_p_inodes\" destroyed!\n");
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protected_features_exit>\n");
-#endif
-
 }

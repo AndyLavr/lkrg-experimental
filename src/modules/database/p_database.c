@@ -26,10 +26,8 @@ int hash_from_ex_table(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <hash_from_ex_table>\n");
-#endif
 
    p_db.kernel_ex_table.p_addr = (unsigned long *)p_kallsyms_lookup_name("__start___ex_table");
    p_tmp = (unsigned long)p_kallsyms_lookup_name("__stop___ex_table");
@@ -44,20 +42,16 @@ int hash_from_ex_table(void) {
    p_db.kernel_ex_table.p_hash = p_super_fast_hash((unsigned char *)p_db.kernel_ex_table.p_addr,
                                                    (unsigned int)p_db.kernel_ex_table.p_size);
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "hash [0x%x] ___ex_table start [0x%lx] size [0x%lx]\n",(int)p_db.kernel_ex_table.p_hash,
                                                                  (long)p_db.kernel_ex_table.p_addr,
                                                                  (long)p_db.kernel_ex_table.p_size);
-#endif
 
 hash_from_ex_table_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <hash_from_ex_table> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -68,10 +62,8 @@ int hash_from_kernel_stext(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <hash_from_kernel_stext>\n");
-#endif
 
    p_db.kernel_stext.p_addr = (unsigned long *)p_kallsyms_lookup_name("_stext");
    p_tmp = (unsigned long)p_kallsyms_lookup_name("_etext");
@@ -106,20 +98,16 @@ int hash_from_kernel_stext(void) {
    p_db.kernel_stext_copy.p_hash = p_super_fast_hash((unsigned char *)p_db.kernel_stext_copy.p_addr,
                                                      (unsigned int)p_db.kernel_stext_copy.p_size);
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "hash [0x%x] _stext start [0x%lx] size [0x%lx]\n",(int)p_db.kernel_stext.p_hash,
                                                             (long)p_db.kernel_stext.p_addr,
                                                             (long)p_db.kernel_stext.p_size);
-#endif
 
 hash_from_kernel_stext_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <hash_from_kernel_stext> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -130,10 +118,8 @@ int hash_from_kernel_rodata(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <hash_from_kernel_rodata>\n");
-#endif
 
    p_db.kernel_rodata.p_addr = (unsigned long *)p_kallsyms_lookup_name("__start_rodata");
    p_tmp = (unsigned long)p_kallsyms_lookup_name("__end_rodata");
@@ -148,20 +134,16 @@ int hash_from_kernel_rodata(void) {
    p_db.kernel_rodata.p_hash = p_super_fast_hash((unsigned char *)p_db.kernel_rodata.p_addr,
                                                  (unsigned int)p_db.kernel_rodata.p_size);
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "hash [0x%x] _rodata start [0x%lx] size [0x%lx]\n",(int)p_db.kernel_rodata.p_hash,
                                                              (long)p_db.kernel_rodata.p_addr,
                                                              (long)p_db.kernel_rodata.p_size);
-#endif
 
 hash_from_kernel_rodata_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <hash_from_kernel_rodata> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -172,10 +154,8 @@ int hash_from_iommu_table(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <hash_from_iommu_table>\n");
-#endif
 
    p_db.kernel_iommu_table.p_addr = (unsigned long *)p_kallsyms_lookup_name("__iommu_table");
    p_tmp = (unsigned long)p_kallsyms_lookup_name("__iommu_table_end");
@@ -196,20 +176,16 @@ int hash_from_iommu_table(void) {
    p_db.kernel_iommu_table.p_hash = 0xFFFFFFFF;
 #endif
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "hash [0x%x] __iommu_table start [0x%lx] size [0x%lx]\n",(int)p_db.kernel_iommu_table.p_hash,
                                                                    (long)p_db.kernel_iommu_table.p_addr,
                                                                    (long)p_db.kernel_iommu_table.p_size);
-#endif
 
 hash_from_iommu_table_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <hash_from_iommu_table> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -220,20 +196,16 @@ uint32_t hash_from_CPU_data(p_IDT_MSR_CRx_hash_mem *p_arg) {
    uint32_t p_hash = 0x0;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <hash_from_CPU_data>\n");
-#endif
 
    for_each_present_cpu(p_tmp) {
       if (p_arg[p_tmp].p_cpu_online == P_CPU_ONLINE) {
          if (cpu_online(p_tmp)) {
             p_hash ^= p_super_fast_hash((unsigned char *)&p_arg[p_tmp],
                                         (unsigned int)sizeof(p_IDT_MSR_CRx_hash_mem));
-#ifdef P_LKRG_DEBUG
-            p_print_log(P_LKRG_DBG,
+            p_debug_log(P_LKRG_DBG,
                    "<hash_from_CPU_data> Hash for cpu id %i total_hash[0x%x]\n",p_tmp,p_hash);
-#endif
          } else {
           // WTF?! I should never be here
             p_print_log(P_LKRG_CRIT,
@@ -241,18 +213,14 @@ uint32_t hash_from_CPU_data(p_IDT_MSR_CRx_hash_mem *p_arg) {
          }
       } else {
       // Skip offline CPUs
-#ifdef P_LKRG_DEBUG
-         p_print_log(P_LKRG_DBG,
+         p_debug_log(P_LKRG_DBG,
                 "<hash_from_CPU_data> Offline cpu id %i total_hash[0x%x]\n",p_tmp,p_hash);
-#endif
       }
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <hash_from_CPU_data>\n");
-#endif
 
    return p_hash;
 }
@@ -265,10 +233,8 @@ int p_create_database(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_create_database>\n");
-#endif
 
    memset(&p_db,0x0,sizeof(p_hash_database));
 
@@ -299,15 +265,13 @@ int p_create_database(void) {
       goto p_create_database_out;
    }
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
      else {
-        p_print_log(P_LKRG_STRONG_DBG,
+        p_debug_log(P_LKRG_STRONG_DBG,
                "<p_create_database> p_db.p_IDT_MSR_CRx_array[%p] with requested size[%d] "
                "= sizeof(p_IDT_MSR_CRx_hash_mem)[%d] * p_db.p_cpu.p_nr_cpu_ids[%d]\n",
                p_db.p_IDT_MSR_CRx_array,(int)(sizeof(p_IDT_MSR_CRx_hash_mem)*p_db.p_cpu.p_nr_cpu_ids),
                (int)sizeof(p_IDT_MSR_CRx_hash_mem),p_db.p_cpu.p_nr_cpu_ids);
    }
-#endif
 
    /*
     * OK, we have prepared all necessary memory. Let's try X86 specific
@@ -395,19 +359,15 @@ int p_create_database(void) {
    p_db.p_module_kobj_hash = p_super_fast_hash((unsigned char *)p_db.p_module_kobj_array,
                                           (unsigned int)p_db.p_module_kobj_nr * sizeof(p_module_kobj_mem));
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "p_module_list_hash => [0x%x]\np_module_kobj_hash => [0x%x]\n",
           p_db.p_module_list_hash,p_db.p_module_kobj_hash);
-#endif
 
 p_create_database_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_create_database> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }

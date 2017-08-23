@@ -29,10 +29,8 @@ struct p_protected_p_inode *p_rb_find_p_inode(struct rb_root *p_root, struct ino
    struct p_protected_p_inode *p_ret = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_find_p_inode>\n");
-#endif
 
    while(p_node) {
       p_struct = rb_entry(p_node, struct p_protected_p_inode, p_rb);
@@ -50,10 +48,8 @@ struct p_protected_p_inode *p_rb_find_p_inode(struct rb_root *p_root, struct ino
 p_rb_find_p_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_find_p_inode> (p_ret => 0x%p)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -67,10 +63,8 @@ struct p_protected_p_inode *p_rb_add_p_inode(struct rb_root *p_root, struct inod
    struct p_protected_p_inode *p_ret = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_add_p_inode>\n");
-#endif
 
    while(*p_node) {
       p_parent = *p_node;
@@ -93,10 +87,8 @@ struct p_protected_p_inode *p_rb_add_p_inode(struct rb_root *p_root, struct inod
 p_rb_add_p_inode_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_add_p_inode> (p_ret => 0x%p)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -105,20 +97,15 @@ p_rb_add_p_inode_out:
 void p_rb_del_p_inode(struct rb_root *p_root, struct p_protected_p_inode *p_source) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_rb_del_p_inode>\n");
-#endif
 
    rb_erase(&p_source->p_rb, p_root);       // Erase the node
    p_free_p_inodes(p_source);               // Free the memory
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_rb_del_p_inode>\n");
-#endif
-
 }
 
 static void p_p_inodes_cache_init(void *p_arg) {
@@ -126,19 +113,14 @@ static void p_p_inodes_cache_init(void *p_arg) {
    struct p_protected_p_inode *p_struct = p_arg;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_p_inodes_cache_init>\n");
-#endif
 
    memset(p_struct, 0x0, sizeof(struct p_protected_p_inode));
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_p_inodes_cache_init>\n");
-#endif
-
 }
 
 int p_init_rb_p_inodes(void) {
@@ -146,10 +128,8 @@ int p_init_rb_p_inodes(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_init_rb_p_inodes>\n");
-#endif
 
    if ( (p_p_inodes_cache = kmem_cache_create("protected_p_inodes", sizeof(struct p_protected_p_inode),
                                               0x0, SLAB_HWCACHE_ALIGN, p_p_inodes_cache_init)) == NULL) {
@@ -159,10 +139,8 @@ int p_init_rb_p_inodes(void) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_init_rb_p_inodes> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -173,10 +151,8 @@ void p_delete_rb_p_inodes(void) {
    struct p_protected_p_inode *p_tmp;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_delete_rb_p_inodes>\n");
-#endif
 
    for (p_node = rb_first(&p_global_p_inodes_root); p_node; p_node = rb_next(p_node)) {
       p_tmp = rb_entry(p_node, struct p_protected_p_inode, p_rb);
@@ -190,9 +166,6 @@ void p_delete_rb_p_inodes(void) {
    kmem_cache_destroy(p_p_inodes_cache);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_delete_rb_p_inodes>\n");
-#endif
-
 }

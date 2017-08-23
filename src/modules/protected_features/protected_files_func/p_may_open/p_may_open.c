@@ -49,17 +49,13 @@ static struct kretprobe p_may_open_kretprobe = {
 
 int p_may_open_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_may_open_entry>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "p_may_open_entry: comm[%s] Pid:%d => Arguments: "
           "[path:0x%lx acc_mode:0x%lx flags:0x%lx]\n",
           current->comm,current->pid,p_regs->di,p_regs->si,p_regs->dx);
-#endif
-#endif
 
    if (p_is_protected_pid(current->pid)) {
       goto p_may_open_entry_out;
@@ -148,13 +144,9 @@ int p_may_open_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
 p_may_open_entry_out:
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Leaving function <p_may_open_entry>\n");
-#endif
-#endif
 
    return 0x0;
 }
@@ -220,10 +212,8 @@ int p_install_may_open_hook(void) {
    int p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_install_may_open_hook>\n");
-#endif
 
    if ( (p_ret = register_kretprobe(&p_may_open_kretprobe)) < 0) {
       p_print_log(P_LKRG_ERR, "[kretprobe] register_kretprobe() failed! [err=%d]\n",p_ret);
@@ -238,10 +228,8 @@ int p_install_may_open_hook(void) {
 p_install_may_open_hook_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_install_may_open_hook> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -250,10 +238,8 @@ p_install_may_open_hook_out:
 void p_uninstall_may_open_hook(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_uninstall_may_open_hook>\n");
-#endif
 
    if (!p_may_open_kretprobe_state) {
       p_print_log(P_LKRG_INFO, "[kretprobe] <%s> at 0x%p is NOT installed\n",
@@ -266,9 +252,6 @@ void p_uninstall_may_open_hook(void) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_uninstall_may_open_hook>\n");
-#endif
-
 }

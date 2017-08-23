@@ -107,21 +107,21 @@ int p_cmp_bytes(char *p_new, char *p_old, unsigned long p_size) {
 
    for (p_tmp = 0x0; p_tmp < p_size-JUMP_LABEL_NOP_SIZE; p_tmp++) {
       if (p_new[p_tmp] != p_old[p_tmp]) {
-#ifdef P_LKRG_DEBUG
-         p_print_log(P_LKRG_STRONG_DBG, "Offset[0x%lx] old[0x%x] new[0x%x]\n",
+
+         // STRONG_DEBUG
+         p_debug_log(P_LKRG_STRONG_DBG, "Offset[0x%lx] old[0x%x] new[0x%x]\n",
                                         p_tmp,
                                         (unsigned int)(p_old[p_tmp] & 0xFF),
                                         (unsigned int)(p_new[p_tmp] & 0xFF));
-
-
-         p_print_log(P_LKRG_STRONG_DBG, "old[0x%x] old+1[0x%x] old+2[0x%x] old+3[0x%x] old+4[0x%x]\n",
+         // STRONG_DEBUG
+         p_debug_log(P_LKRG_STRONG_DBG, "old[0x%x] old+1[0x%x] old+2[0x%x] old+3[0x%x] old+4[0x%x]\n",
                                   p_old[p_tmp] & 0xFF,p_old[p_tmp+1] & 0xFF,p_old[p_tmp+2] & 0xFF,
                                   p_old[p_tmp+3] & 0xFF, p_old[p_tmp+4] & 0xFF);
 
-         p_print_log(P_LKRG_STRONG_DBG, "new[0x%x] new+1[0x%x] new+2[0x%x] new+3[0x%x] new+4[0x%x]\n",
+         // STRONG_DEBUG
+         p_debug_log(P_LKRG_STRONG_DBG, "new[0x%x] new+1[0x%x] new+2[0x%x] new+3[0x%x] new+4[0x%x]\n",
                                   p_new[p_tmp] & 0xFF, p_new[p_tmp+1] & 0xFF, p_new[p_tmp+2] & 0xFF,
                                   p_new[p_tmp+3] & 0xFF, p_new[p_tmp+4] & 0xFF);
-#endif
 
          /* OK, we have found difference, let's check if this is "whitelist" modifications */
 /*
@@ -181,11 +181,10 @@ int p_cmp_bytes(char *p_new, char *p_old, unsigned long p_size) {
                sprint_symbol_no_offset(p_sym1,p_VA1); // symbol name for original VA
                sprint_symbol_no_offset(p_sym2,p_VA2); // symbol name for destination VA
 
-#ifdef P_LKRG_DEBUG
-               p_print_log(P_LKRG_DBG,
+               // DEBUG
+               p_debug_log(P_LKRG_DBG,
                            "[NOP->JMP] p_val[0x%x] p_VA1[0x%lx] p_VA2[0x%lx] p_sym1[%s] p_sym2[%s]\n",
                            *p_val,p_VA1,p_VA2,p_sym1,p_sym2);
-#endif
 
                p_len = strlen(p_sym1);
                if (p_len != strlen(p_sym2))
@@ -224,11 +223,10 @@ int p_cmp_bytes(char *p_new, char *p_old, unsigned long p_size) {
                         ((p_new[p_tmp+3] & 0xFF) == 0x00) && // rest of the bytes can't be random...
                         ((p_new[p_tmp+4] & 0xFF) == 0x00)) { // rest of the bytes can't be random...
 
-#ifdef P_LKRG_DEBUG
-               p_print_log(P_LKRG_DBG,
+               // DEBUG
+               p_debug_log(P_LKRG_DBG,
                            "[NOP->0xCC] p_old[0x%lx]{0x%x} -> p_new[0x%lx] => 0x%x\n",
                                                           p_tmp,p_old[p_tmp],p_tmp,p_new[p_tmp]);
-#endif
 
                /*
                 * Let's modify dynamicaly copy of the vmlinux image. We know that current modification
@@ -269,11 +267,10 @@ int p_cmp_bytes(char *p_new, char *p_old, unsigned long p_size) {
                sprint_symbol_no_offset(p_sym1,p_VA1); // symbol name for original VA
                sprint_symbol_no_offset(p_sym2,p_VA2); // symbol name for destination VA
 
-#ifdef P_LKRG_DEBUG
-               p_print_log(P_LKRG_DBG,
+               // DEBUG
+               p_debug_log(P_LKRG_DBG,
                            "[JMP->NOP] p_val[0x%x] p_VA1[0x%lx] p_VA2[0x%lx] p_sym1[%s] p_sym2[%s]\n",
                            *p_val,p_VA1,p_VA2,p_sym1,p_sym2);
-#endif
 
                p_len = strlen(p_sym1);
                if (p_len != strlen(p_sym2)) {
@@ -320,12 +317,10 @@ int p_cmp_bytes(char *p_new, char *p_old, unsigned long p_size) {
                         ((p_old[p_tmp+3] & 0xFF) == 0x00) && // rest of the bytes can't be random...
                         ((p_old[p_tmp+4] & 0xFF) == 0x00)) { // rest of the bytes can't be random...
 
-#ifdef P_LKRG_DEBUG
-               p_print_log(P_LKRG_DBG,
+               // DEBUG
+               p_debug_log(P_LKRG_DBG,
                            "[0xCC->NOP] p_old[0x%lx]{0x%x} -> p_new[0x%lx] => 0x%x\n",
                                                           p_tmp,p_old[p_tmp],p_tmp,p_new[p_tmp]);
-#endif
-
 
                /*
                 * Let's modify dynamicaly copy of the vmlinux image. We know that current modification

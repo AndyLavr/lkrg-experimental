@@ -71,7 +71,7 @@
 #define __P_LKRG_STRONG_DBG     __P_LKRG_DBG
 
 
-
+/*
 #ifdef P_LKRG_DEBUG
 
 #define p_print_log(p_level, p_fmt, p_args...)                                           \
@@ -97,8 +97,9 @@
    p_print_ret;                                                                          \
 })
 
-#else
 
+#else
+*/
 #define p_print_log(p_level, p_fmt, p_args...)                                           \
 ({                                                                                       \
    int p_print_ret = 0x0;                                                                \
@@ -118,7 +119,7 @@
    p_print_ret;                                                                          \
 })
 
-#endif
+//#endif
 
 
 
@@ -174,6 +175,33 @@
 
 #ifdef P_LKRG_DEBUG
 
+#ifdef P_LKRG_NOTIFIER_DBG
+ #define p_debug_notifier_log(p_fmt, p_args...)                                          \
+                  p_debug_log(P_LKRG_STRONG_DBG, p_fmt, ## p_args)
+#else
+ #define p_debug_notifier_log(p_fmt, p_args...)  ({ 0x0; })
+#endif
+
+#ifdef P_LKRG_STRONG_KPROBE_DEBUG
+ #define p_debug_kprobe_log(p_fmt, p_args...)                                            \
+                  p_debug_log(P_LKRG_STRONG_DBG, p_fmt, ## p_args)
+#else
+ #define p_debug_kprobe_log(p_fmt, p_args...)    ({ 0x0; })
+#endif
+
+#define p_debug_log(p_level, p_fmt, p_args...)                                           \
+({                                                                                       \
+   int p_print_ret = 0x0;                                                                \
+                                                                                         \
+   if (p_level == P_LKRG_DBG) {                                                          \
+      p_print_ret = p_print_dbg(__P_LKRG_DBG P_LKRG_SIGNATURE p_fmt, ## p_args);         \
+   } else if (p_level == P_LKRG_STRONG_DBG) {                                            \
+      p_print_ret = p_print_dbg2(__P_LKRG_STRONG_DBG P_LKRG_SIGNATURE p_fmt, ## p_args); \
+   }                                                                                     \
+                                                                                         \
+   p_print_ret;                                                                          \
+})
+
 #define p_print_dbg(p_fmt, p_args...)                                                    \
 ({                                                                                       \
    int p_print_ret = 0x0;                                                                \
@@ -195,6 +223,16 @@
                                                                                          \
    p_print_ret;                                                                          \
 })
+
+#else
+
+#define p_debug_log(p_level, p_fmt, p_args...)  ({ 0x0; })
+
+#define p_print_dbg(p_fmt, p_args...)           ({ 0x0; })
+#define p_print_dbg2(p_fmt, p_args...)          ({ 0x0; })
+
+#define p_debug_notifier_log(p_fmt, p_args...)  ({ 0x0; })
+#define p_debug_kprobe_log(p_fmt, p_args...)    ({ 0x0; })
 
 #endif
 

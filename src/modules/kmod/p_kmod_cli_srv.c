@@ -36,10 +36,9 @@ char *gen_rand_password(size_t p_pass_size) {
    size_t p_cnt;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <gen_rand_password>\n");
-#endif
+
    /*
     * This is one-shot function not in the time-critical context/section. We can sleep here so
     * we are allowed to make 'slowpath' memory allocation - don't need to use emergency pools.
@@ -66,10 +65,8 @@ char *gen_rand_password(size_t p_pass_size) {
 gen_rand_password_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <gen_rand_password> (p_tmp => 0x%p)\n",p_tmp);
-#endif
 
    return p_tmp;
 }
@@ -88,10 +85,8 @@ int p_cli_init(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_cli_init>\n");
-#endif
 
    get_random_bytes(&p_tmp, sizeof(size_t));
    p_tmp %= (PI3_PASSWORD_SIZE_MAX-PI3_PASSWORD_SIZE_MIN);
@@ -142,10 +137,8 @@ p_cli_init_out:
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_cli_init> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -159,19 +152,16 @@ inline int p_discover_ctrl_structure(struct module *p_tmp, unsigned long *p_addr
 //   char *p_path_val = NULL;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_discover_ctrl_structure> [%s] NR of parameters [%d][%p]\n",p_tmp->name,p_tmp->num_kp,p_tmp->kp);
-#endif
 
    if (p_tmp->num_kp != 2)
       goto p_discover_out;
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "<p_discover_ctrl_structure> param->name[0][%s] and param->name[1][%s]\n",
                                                         p_tmp->kp[0].name,p_tmp->kp[1].name);
-#endif
 
 //   spin_lock(&p_mod_blocklock_var);
 
@@ -196,20 +186,18 @@ inline int p_discover_ctrl_structure(struct module *p_tmp, unsigned long *p_addr
          p_path_arg = (long *)p_tmp->kp[1].arg;
       }
 
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_DBG,
+// DEBUG
+      p_debug_log(P_LKRG_DBG,
              "<p_discover_ctrl_structure> param->name[0][%s] and param->name[1][%s]\n",
                                                            p_tmp->kp[0].name,p_tmp->kp[1].name);
-#endif
 
       if (p_pass_arg) {
          p_pass_val = (char *)(*p_pass_arg); // read address
          if (p_pass_val) {
 
-#ifdef P_LKRG_DEBUG
-            p_print_log(P_LKRG_DBG,
+// DEBUG
+            p_debug_log(P_LKRG_DBG,
                    "<p_discover_ctrl_structure> password[%s]\n",p_pass_val);
-#endif
 
             /* OK argument looks valid, chech if password matches */
 //            if (strlen(p_pass_val) != strlen(p_lkrg_random_ctrl_password)) {
@@ -243,10 +231,8 @@ inline int p_discover_ctrl_structure(struct module *p_tmp, unsigned long *p_addr
             /* OK, looks like we have control structure :) */
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-            p_print_log(P_LKRG_STRONG_DBG,
+            p_debug_log(P_LKRG_STRONG_DBG,
                    "Leaving function <p_discover_ctrl_structure> (SUCCESS)\n");
-#endif
 
             return P_LKRG_SUCCESS;
          }
@@ -259,10 +245,8 @@ p_discover_out:
       kfree(p_pass_hash);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_discover_ctrl_structure> (ERROR)\n");
-#endif
 
    return P_LKRG_GENERAL_ERROR;
 }
@@ -289,20 +273,16 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
    unsigned long p_inode;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_try_parse_ctrl_structure> p_start[%p] p_size[0x%x]\n",p_start,p_size);
-#endif
 
    if (p_size < (PI3_MARKER_SIZE*2 + PI3_CTRL_STRUCT_SIZE + 1)) {
 
       p_print_log(P_LKRG_INFO, "Control module is WRONG! Size mismatch.\n");
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_try_parse_ctrl_structure> (ERROR)\n");
-#endif
 
       return P_LKRG_GENERAL_ERROR;
    }
@@ -320,40 +300,33 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
           ) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
        "[0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X]\n",
        (*(p_tmp+0)) & 0xFF, (*(p_tmp+1)) & 0xFF, (*(p_tmp+2)) & 0xFF, (*(p_tmp+3)) & 0xFF,
        (*(p_tmp+4)) & 0xFF, (*(p_tmp+5)) & 0xFF, (*(p_tmp+6)) & 0xFF, (*(p_tmp+7)) & 0xFF);
-#endif
 
       p_cnt++;
       p_tmp++;
    }
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "<p_try_parse_ctrl_structure> p_cnt[%d] p_size[%d]\n",p_cnt,p_size);
-#endif
 
    if (p_cnt == p_size-9 || !(p_cnt+PI3_CTRL_STRUCT_SIZE+PI3_MARKER_SIZE < p_size-1)) {
 
       p_print_log(P_LKRG_INFO, "Control module is WRONG! Size mismatch.\n");
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_try_parse_ctrl_structure> (ERROR)\n");
-#endif
 
       return P_LKRG_GENERAL_ERROR; // Didn't find START marker...
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_try_parse_ctrl_structure> 2\n");
-#endif
 
    if ( *(p_tmp+PI3_MARKER_SIZE+PI3_CTRL_STRUCT_SIZE+0) != PI3_MARKET_INIT_END0 ||
         *(p_tmp+PI3_MARKER_SIZE+PI3_CTRL_STRUCT_SIZE+1) != PI3_MARKET_INIT_END1 ||
@@ -366,8 +339,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
          /* This marker MUST be here... something is fucked-up! */
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
        "Leaving function <p_try_parse_ctrl_structure> (ERROR)\n"
        "[0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X] [0x%02X]\n",
        (*(p_tmp+PI3_MARKER_SIZE+PI3_CTRL_STRUCT_SIZE+0)) & 0xFF,
@@ -378,7 +350,6 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
        (*(p_tmp+PI3_MARKER_SIZE+PI3_CTRL_STRUCT_SIZE+5)) & 0xFF,
        (*(p_tmp+PI3_MARKER_SIZE+PI3_CTRL_STRUCT_SIZE+6)) & 0xFF,
        (*(p_tmp+PI3_MARKER_SIZE+PI3_CTRL_STRUCT_SIZE+7)) & 0xFF);
-#endif
 
       return P_LKRG_GENERAL_ERROR;
    }
@@ -386,10 +357,8 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
    /* OK, looks like we have valid control structure. Let's parse it... */
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "<p_try_parse_ctrl_structure> 3\n");
-#endif
 
    p_tmp += PI3_MARKER_SIZE;
    p_tmp_read = (unsigned int *)p_tmp;
@@ -466,25 +435,21 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
           "\tUnhide myself => [0x%x]\n\n",p_unhide_module);
 #else
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "\n\tp_r0 => [0x%x]\n",p_r0);
 #endif
-#endif
 
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+// DEBUG
+   p_debug_log(P_LKRG_DBG,
           "\tp_r1 => [0x%x]\n",p_r1);
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "\tp_r2 => [0x%x]\n",p_r2);
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "\tp_r3 => [0x%x]\n",p_r3);
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "\tp_r4 => [0x%x]\n",p_r4);
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
           "\tp_r5 => [0x%x]\n",p_r5);
-#endif
 
    /* Validate */
    if (p_validate_ctrl_structure(p_timestamp,p_log_level,p_force_run,
@@ -494,10 +459,8 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
       p_print_log(P_LKRG_INFO,"CTRL structure validation failed! Non action taken.\n");
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-      p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_try_parse_ctrl_structure> (ERROR)\n");
-#endif
 
       return P_LKRG_GENERAL_ERROR;
    }
@@ -565,10 +528,8 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 #endif
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_try_parse_ctrl_structure> (SUCCESS)\n");
-#endif
 
    return P_LKRG_SUCCESS;
 }
@@ -580,10 +541,8 @@ inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
                                      unsigned long p_inode) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_validate_ctrl_structure>\n");
-#endif
 
    p_print_log(P_LKRG_INFO,
           "\tTimer validation => [0x%x]\n",p_time);
@@ -660,20 +619,16 @@ inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
           "\tValidation complete!\n");
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_validate_ctrl_structure> (SUCCESS)\n");
-#endif
 
    return P_LKRG_SUCCESS;
 
 p_validate_ctrl_structure_err:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_validate_ctrl_structure> (ERROR)\n");
-#endif
 
    return P_LKRG_GENERAL_ERROR;
 }
@@ -693,10 +648,8 @@ int p_block_elegant(void) {
    unsigned long *p_addr = p_mod_block_init;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_block_elegant>\n");
-#endif
 
    p_tmp->init = (int (*)(void))p_addr;
    if (p_discover_ctrl_structure(p_tmp, p_addr)) {
@@ -706,10 +659,8 @@ int p_block_elegant(void) {
                   "!! Module insertion blocked !!\n");
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_block_elegant> (blocked!)\n");
-#endif
 
       return P_LKRG_GENERAL_ERROR;
    }
@@ -722,10 +673,8 @@ int p_block_elegant(void) {
       spin_unlock(&p_mod_blocklock_var);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_block_elegant> (allowed!)\n");
-#endif
 
    return P_LKRG_SUCCESS;
 }
@@ -739,10 +688,8 @@ struct file *p_file_open(const char* p_path, int p_flags, int p_mode) {
    int p_err = 0;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_file_open>\n");
-#endif
 
    p_oldfs = get_fs();
    set_fs(get_ds());
@@ -751,18 +698,15 @@ struct file *p_file_open(const char* p_path, int p_flags, int p_mode) {
    if(IS_ERR(p_filp)) {
       p_err = PTR_ERR(p_filp);
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+      p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_file_open> (ERROR)\n");
-#endif
       return NULL;
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_file_open> (SUCCESS)\n");
-#endif
+
    return p_filp;
 }
 
@@ -770,36 +714,28 @@ struct file *p_file_open(const char* p_path, int p_flags, int p_mode) {
 void p_file_close(struct file *p_filp) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_file_close>\n");
-#endif
 
    filp_close(p_filp, NULL);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_file_close>\n");
-#endif
 }
 
 /* Sync data to the file */
 int p_file_sync(struct file *p_file) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_file_sync>\n");
-#endif
 
    vfs_fsync(p_file, 0);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_file_sync>\n");
-#endif
 
    return P_LKRG_SUCCESS;
 }
@@ -812,10 +748,8 @@ int p_file_write(struct file *p_file, unsigned long long p_offset,
    int p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_file_write>\n");
-#endif
 
    p_oldfs = get_fs();
    set_fs(get_ds());
@@ -825,10 +759,8 @@ int p_file_write(struct file *p_file, unsigned long long p_offset,
    set_fs(p_oldfs);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_file_write>\n");
-#endif
 
    return p_ret;
 }

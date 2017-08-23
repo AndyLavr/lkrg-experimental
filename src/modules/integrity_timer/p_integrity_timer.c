@@ -41,18 +41,14 @@ static void p_offload_cache_zero(void *p_arg) {
    struct work_struct *p_struct = p_arg;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_cache_zero>\n");
-#endif
 
    memset(p_struct, 0x0, sizeof(struct work_struct));
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_offload_cache_zero>\n");
-#endif
 
 }
 
@@ -61,10 +57,8 @@ int p_offload_cache_init(void) {
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_cache_init>\n");
-#endif
 
    if ( (p_offload_cache = kmem_cache_create("p_offload_cache", sizeof(struct work_struct),
                                              0x0, SLAB_HWCACHE_ALIGN, p_offload_cache_zero)) == NULL) {
@@ -73,10 +67,8 @@ int p_offload_cache_init(void) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_offload_cache_init> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -84,28 +76,22 @@ int p_offload_cache_init(void) {
 void p_offload_cache_delete(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_cache_delete>\n");
-#endif
 
    kmem_cache_destroy(p_offload_cache);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_offload_cache_delete>\n");
-#endif
 
 }
 
 void p_integrity_timer(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_integrity_timer>\n");
-#endif
 
    init_timer(&p_timer);
    p_timer.expires    = jiffies + p_lkrg_global_ctrl.p_timestamp*HZ;
@@ -114,10 +100,8 @@ void p_integrity_timer(void) {
    add_timer(&p_timer);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_integrity_timer>\n");
-#endif
 
 }
 
@@ -126,12 +110,10 @@ void p_offload_work(unsigned long p_timer) {
    struct work_struct *p_worker;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_work>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "p_timer => %ld\n",p_timer);
-#endif
 
    while ( (p_worker = p_alloc_offload()) == NULL); // Should never be NULL
    INIT_WORK(p_worker, p_check_integrity);
@@ -141,10 +123,8 @@ void p_offload_work(unsigned long p_timer) {
       p_integrity_timer();
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_offload_work>\n");
-#endif
 
 }
 
@@ -168,10 +148,8 @@ void p_check_integrity(struct work_struct *p_work) {
    struct module *p_tmp_mod;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_check_integrity>\n");
-#endif
 
    /*
     * First allocate temporary buffer for per CPU data. Number of possible CPUs
@@ -488,7 +466,8 @@ void p_check_integrity(struct work_struct *p_work) {
                if (!p_lkrg_global_ctrl.p_block_modules) {
                   /* Maybe we have sleeping module activity event ? */
                   if (mutex_is_locked(&p_module_activity)) {
-                     p_print_log(P_LKRG_STRONG_DBG,
+                     // STRONG_DEBUG
+                     p_debug_log(P_LKRG_STRONG_DBG,
                                 "Hidden[%p] p_module_activity_ptr[%p]\n",
                                 p_module_kobj_tmp[p_tmp_hash].p_mod,p_module_activity_ptr);
                      if (p_module_kobj_tmp[p_tmp_hash].p_mod == p_module_activity_ptr) {
@@ -601,7 +580,8 @@ void p_check_integrity(struct work_struct *p_work) {
                if (!p_lkrg_global_ctrl.p_block_modules) {
                   /* Maybe we have sleeping module activity event ? */
                   if (mutex_is_locked(&p_module_activity)) {
-                     p_print_log(P_LKRG_STRONG_DBG,
+                     // STRONG_DEBUG
+                     p_debug_log(P_LKRG_STRONG_DBG,
                                 "Hidden[%p] p_module_activity_ptr[%p]\n",
                                 p_module_list_tmp[p_tmp_hash].p_mod,p_module_activity_ptr);
                      if (p_module_list_tmp[p_tmp_hash].p_mod == p_module_activity_ptr) {
@@ -751,7 +731,8 @@ void p_check_integrity(struct work_struct *p_work) {
                if (!p_lkrg_global_ctrl.p_block_modules) {
                   /* Maybe we have sleeping module activity event ? */
                   if (mutex_is_locked(&p_module_activity)) {
-                     p_print_log(P_LKRG_STRONG_DBG,
+                     // STRONG_DEBUG
+                     p_debug_log(P_LKRG_STRONG_DBG,
                                 "Lost[%p] p_module_activity_ptr[%p]\n",
                                 p_db.p_module_list_array[p_tmp_hash].p_mod,p_module_activity_ptr);
                      if (p_db.p_module_list_array[p_tmp_hash].p_mod == p_module_activity_ptr) {
@@ -867,7 +848,8 @@ void p_check_integrity(struct work_struct *p_work) {
                if (!p_lkrg_global_ctrl.p_block_modules) {
                   /* Maybe we have sleeping module activity event ? */
                   if (mutex_is_locked(&p_module_activity)) {
-                     p_print_log(P_LKRG_STRONG_DBG,
+                     // STRONG_DEBUG
+                     p_debug_log(P_LKRG_STRONG_DBG,
                                 "Extra[%p] p_module_activity_ptr[%p]\n",
                                 p_module_list_tmp[p_tmp_hash].p_mod,p_module_activity_ptr);
                      if (p_module_list_tmp[p_tmp_hash].p_mod == p_module_activity_ptr) {
@@ -1010,7 +992,8 @@ void p_check_integrity(struct work_struct *p_work) {
                if (!p_lkrg_global_ctrl.p_block_modules) {
                   /* Maybe we have sleeping module activity event ? */
                   if (mutex_is_locked(&p_module_activity)) {
-                     p_print_log(P_LKRG_STRONG_DBG,
+                     // STRONG_DEBUG
+                     p_debug_log(P_LKRG_STRONG_DBG,
                                 "Lost[%p] p_module_activity_ptr[%p]\n",
                                 p_db.p_module_kobj_array[p_tmp_hash].p_mod,p_module_activity_ptr);
                      if (p_db.p_module_kobj_array[p_tmp_hash].p_mod == p_module_activity_ptr) {
@@ -1124,7 +1107,8 @@ void p_check_integrity(struct work_struct *p_work) {
                if (!p_lkrg_global_ctrl.p_block_modules) {
                   /* Maybe we have sleeping module activity event ? */
                   if (mutex_is_locked(&p_module_activity)) {
-                     p_print_log(P_LKRG_STRONG_DBG,
+                     // STRONG_DEBUG
+                     p_debug_log(P_LKRG_STRONG_DBG,
                                 "Extra[%p] p_module_activity_ptr[%p]\n",
                                 p_module_kobj_tmp[p_tmp_hash].p_mod,p_module_activity_ptr);
                      if (p_module_kobj_tmp[p_tmp_hash].p_mod == p_module_activity_ptr) {
@@ -1328,9 +1312,7 @@ void p_check_integrity(struct work_struct *p_work) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_check_integrity>\n");
-#endif
 
 }

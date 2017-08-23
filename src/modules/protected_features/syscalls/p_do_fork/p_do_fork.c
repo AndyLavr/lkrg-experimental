@@ -40,15 +40,10 @@ static struct kretprobe p_do_fork_kretprobe = {
 
 int p_do_fork_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_do_fork_entry>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "p_do_fork_entry: comm[%s] Pid:%d\n",current->comm,current->pid);
-#endif
-#endif
 
    if (!p_is_protected_pid(current->pid)) {
       /* It should NOT have CAP_SYS_RAWIO capability */
@@ -84,14 +79,8 @@ int p_do_fork_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 //      }
    }
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Leaving function <p_do_fork_entry>\n");
-#endif
-#endif
-
 
    /* A dump_stack() here will give a stack backtrace */
    return 0x0;
@@ -100,16 +89,11 @@ int p_do_fork_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
 int p_do_fork_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Entering function <p_do_fork_ret>\n");
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Fork returned value => %ld comm[%s] Pid:%d parent[%d]\n",
                        p_regs->ax,current->comm,current->pid,current->real_parent->pid);
-#endif
-#endif
 
    if (p_is_protected_pid(current->pid)) {
       p_print_log(P_LKRG_INFO, "Protected do_fork() comm[%s] Pid:%d RetPid:%ld\n",
@@ -149,13 +133,8 @@ int p_do_fork_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
 
    }
 
-#ifdef P_LKRG_STRONG_KPROBE_DEBUG
-// STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_kprobe_log(
           "Leaving function <p_do_fork_ret>\n");
-#endif
-#endif
 
    return 0x0;
 }
@@ -166,10 +145,8 @@ int p_install_do_fork_hook(void) {
    int p_ret;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_install_do_fork_hook>\n");
-#endif
 
    if ( (p_ret = register_kretprobe(&p_do_fork_kretprobe)) < 0) {
       p_print_log(P_LKRG_ERR, "[kretprobe] register_kretprobe() failed! [err=%d]\n",p_ret);
@@ -184,10 +161,8 @@ int p_install_do_fork_hook(void) {
 p_install_do_fork_hook_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_install_do_fork_hook> (p_ret => %d)\n",p_ret);
-#endif
 
    return p_ret;
 }
@@ -196,10 +171,8 @@ p_install_do_fork_hook_out:
 void p_uninstall_do_fork_hook(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_uninstall_do_fork_hook>\n");
-#endif
 
    if (!p_do_fork_kretprobe_state) {
       p_print_log(P_LKRG_INFO, "[kretprobe] <%s> at 0x%p is NOT installed\n",
@@ -212,9 +185,6 @@ void p_uninstall_do_fork_hook(void) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_uninstall_do_fork_hook>\n");
-#endif
-
 }

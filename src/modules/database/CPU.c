@@ -51,10 +51,8 @@
 void p_get_cpus(p_cpu_info *p_arg) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_get_cpus>\n");
-#endif
 
    memset(p_arg,0x0,sizeof(p_cpu_info));
 
@@ -65,19 +63,15 @@ void p_get_cpus(p_cpu_info *p_arg) {
 
    p_arg->p_nr_cpu_ids = nr_cpu_ids;
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_DBG,
+   p_debug_log(P_LKRG_DBG,
 //   p_print_log(P_LKRG_CRIT,
           "<p_get_cpus> online[%d] possible[%d] present[%d] active[%d] nr_cpu_ids[%d]\n",
           p_arg->online_CPUs,p_arg->possible_CPUs,p_arg->present_CPUs,p_arg->active_CPUs,
           p_arg->p_nr_cpu_ids);
-#endif
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_get_cpus>\n");
-#endif
 
 }
 
@@ -86,10 +80,8 @@ int p_cmp_cpus(p_cpu_info *p_arg1, p_cpu_info *p_arg2) {
    int p_flag = 0x0;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_cmp_cpus>\n");
-#endif
 
    if (p_arg1->online_CPUs != p_arg2->online_CPUs) {
       p_print_log(P_LKRG_CRIT,
@@ -118,10 +110,8 @@ int p_cmp_cpus(p_cpu_info *p_arg1, p_cpu_info *p_arg2) {
    }
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_cmp_cpus>\n");
-#endif
 
    return p_flag;
 }
@@ -138,10 +128,8 @@ int p_cpu_callback(struct notifier_block *p_block, unsigned long p_action, void 
 
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_cpu_callback>\n");
-#endif
 
 // TODO: lock db
 //       lock is done in the individual action function
@@ -165,10 +153,8 @@ int p_cpu_callback(struct notifier_block *p_block, unsigned long p_action, void 
 //       to reduce locking/starving time
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_cpu_callback>\n");
-#endif
 
    return NOTIFY_OK;
 }
@@ -180,11 +166,9 @@ int p_cpu_online_action(unsigned int p_cpu) {
    int tmp_online_CPUs = p_db.p_cpu.online_CPUs;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
 //   p_print_log(P_LKRG_CRIT,
           "Entering function <p_cpu_online_action>\n");
-#endif
 
    /* We are heavly consuming module list here - take 'module_mutex' */
    mutex_lock(&module_mutex);
@@ -259,11 +243,9 @@ int p_cpu_online_action(unsigned int p_cpu) {
    mutex_unlock(&module_mutex);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
 //   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_cpu_online_action>\n");
-#endif
 
    return 0x0;
 }
@@ -273,11 +255,9 @@ int p_cpu_dead_action(unsigned int p_cpu) {
    int tmp_online_CPUs = p_db.p_cpu.online_CPUs;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
 //   p_print_log(P_LKRG_CRIT,
           "Entering function <p_cpu_dead_action>\n");
-#endif
 
    /* We are heavly consuming module list here - take 'module_mutex' */
    mutex_lock(&module_mutex);
@@ -360,11 +340,9 @@ int p_cpu_dead_action(unsigned int p_cpu) {
    mutex_unlock(&module_mutex);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
 //   p_print_log(P_LKRG_CRIT,
           "Leaving function <p_cpu_dead_action>\n");
-#endif
 
    return 0x0;
 }

@@ -29,10 +29,8 @@ char *p_sha1_hash(char **p_arg_out, const char *p_arg_in, unsigned int p_arg_len
    unsigned int p_tmp_size;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_cpu_dead_action>\n");
-#endif
 
    if (!p_arg_in || !p_arg_out || !p_arg_len || p_arg_len > 100) {
       *p_arg_out = NULL;
@@ -96,10 +94,10 @@ char *p_sha1_hash(char **p_arg_out, const char *p_arg_in, unsigned int p_arg_len
 
    memcpy(*p_arg_out, p_tmp_sha1_hash, P_SHA1_SIZE);
 
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+// STRONG_DEBUG
+   p_debug_log(P_LKRG_STRONG_DBG,
           "[%d][%s]\n",p_arg_len,p_arg_in);
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "SHA1 => [%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X]\n",
           p_tmp_sha1_hash[0],p_tmp_sha1_hash[1],p_tmp_sha1_hash[2],p_tmp_sha1_hash[3],
           p_tmp_sha1_hash[4],p_tmp_sha1_hash[5],p_tmp_sha1_hash[6],p_tmp_sha1_hash[7],
@@ -107,7 +105,6 @@ char *p_sha1_hash(char **p_arg_out, const char *p_arg_in, unsigned int p_arg_len
           p_tmp_sha1_hash[12],p_tmp_sha1_hash[13],p_tmp_sha1_hash[14],p_tmp_sha1_hash[15],
           p_tmp_sha1_hash[16],p_tmp_sha1_hash[17],p_tmp_sha1_hash[18],p_tmp_sha1_hash[19]
    );
-#endif
 
 p_sha1_hash_out:
 
@@ -117,10 +114,8 @@ p_sha1_hash_out:
       kfree(p_tmp_sdesc);
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_sha1_hash> ret => %d\n",p_ret);
-#endif
 
    return *p_arg_out;
 }

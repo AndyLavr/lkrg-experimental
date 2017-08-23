@@ -27,10 +27,8 @@ struct module_notes_attrs *p_find_notes_attrs;
 void p_hide_itself(void) {
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_hide_itself>\n");
-#endif
 
    if (!p_lkrg_global_ctrl.p_unhide_module) {
       p_print_log(P_LKRG_WARN,
@@ -53,10 +51,8 @@ void p_hide_itself(void) {
 p_hide_itself_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_hide_itself>\n");
-#endif
 
    return;
 }
@@ -70,10 +66,8 @@ void p_unhide_itself(void) {
    struct kobj_type  *p_tmp_ktype  = p_tmp_mod->mkobj.kobj.ktype;
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_unhide_itself>\n");
-#endif
 
    if (p_lkrg_global_ctrl.p_unhide_module) {
       p_print_log(P_LKRG_WARN,
@@ -92,10 +86,8 @@ void p_unhide_itself(void) {
 p_unhide_itself_out:
 
 // STRONG_DEBUG
-#ifdef P_LKRG_DEBUG
-   p_print_log(P_LKRG_STRONG_DBG,
+   p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_unhide_itself>\n");
-#endif
 
    return;
 }
