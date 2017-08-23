@@ -20,6 +20,11 @@
 /*
  * CAP_SYS_RAWIO API
  */
+
+/*
+ * If Protected Features are correctly initialized, we need to remove
+ * CAP_SYS_RAWIO capability from every NOT Protected Process context.
+ */
 void p_protected_lower_caps(pid_t p_arg) {
 
    struct task_struct *p_task_struct = pid_task(find_vpid(p_arg), PIDTYPE_PID);
@@ -53,6 +58,11 @@ void p_protected_lower_caps(pid_t p_arg) {
           "Leaving function <p_protected_lower_caps>\n");
 }
 
+/*
+ * If Protected Features are correctly initialized, we need to raise
+ * CAP_SYS_RAWIO capability for newly created / added Protected Process
+ * Context.
+ */
 void p_protected_raise_caps(pid_t p_arg) {
 
    struct task_struct *p_task_struct = pid_task(find_vpid(p_arg), PIDTYPE_PID);
@@ -540,9 +550,8 @@ struct p_protected_p_inode *p_is_protected_p_inode(struct inode *p_arg) {
 }
 /* END - protected inodes */
 
-int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent_out_inode) {
+int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent_out_inode, struct path *p_path) {
 
-   struct path p_path;
    int p_ret = P_LKRG_SUCCESS;
 
 // STRONG_DEBUG
@@ -553,7 +562,7 @@ int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent
    p_debug_log(P_LKRG_DBG,
           "Trying to resolve [%s]\n",p_arg);
 
-   if ( (p_ret = kern_path(p_arg, LOOKUP_FOLLOW, &p_path)) != P_LKRG_SUCCESS) {
+   if ( (p_ret = kern_path(p_arg, LOOKUP_FOLLOW, p_path)) != P_LKRG_SUCCESS) {
       p_print_log(P_LKRG_ERR,
              "[kern_path] Can\'t resolve filename path :(");
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -562,15 +571,14 @@ int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent
 
 // DEBUG
    p_debug_log(P_LKRG_DBG,
-          "p_path.dentry->d_inode[0x%p] p_path.dentry->d_parent[0x%p]\n",
-                                   p_path.dentry->d_inode,p_path.dentry->d_parent);
+          "p_path->dentry->d_inode[0x%p] p_path->dentry->d_parent[0x%p]\n",
+                                   p_path->dentry->d_inode,p_path->dentry->d_parent);
    p_debug_log(P_LKRG_DBG,
-          "p_path.dentry->d_inode[0x%p] d_parent->d_inode[0x%p]\n",
-                                   p_path.dentry->d_inode,p_path.dentry->d_parent->d_inode);
+          "p_path->dentry->d_inode[0x%p] d_parent->d_inode[0x%p]\n",
+                                   p_path->dentry->d_inode,p_path->dentry->d_parent->d_inode);
 
-   *p_out_inode = p_path.dentry->d_inode;
-   *p_parent_out_inode = p_path.dentry->d_parent->d_inode;
-   path_put(&p_path);
+   *p_out_inode = p_path->dentry->d_inode;
+   *p_parent_out_inode = p_path->dentry->d_parent->d_inode;
 
 p_get_inode_out:
 
@@ -631,6 +639,7 @@ void p_offload_protected_inode_run(struct work_struct *p_arg) {
    int p_ret;
    struct inode *p_inode = NULL;
    struct inode *p_parent_inode = NULL;
+   struct path p_path;
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -643,7 +652,7 @@ void p_offload_protected_inode_run(struct work_struct *p_arg) {
       goto p_offload_protected_inode_run_out;
    }
 
-   if ( (p_ret = p_get_inode(p_tmp->p_path_val,&p_inode,&p_parent_inode)) == P_LKRG_GENERAL_ERROR) {
+   if ( (p_ret = p_get_inode(p_tmp->p_path_val,&p_inode,&p_parent_inode, &p_path)) == P_LKRG_GENERAL_ERROR) {
       p_print_log(P_LKRG_CRIT,
              "Can\'t get inode for file => %s :(\n",p_tmp->p_path_val);
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -654,7 +663,7 @@ void p_offload_protected_inode_run(struct work_struct *p_arg) {
       p_print_log(P_LKRG_CRIT,
              "Got inode[%ld] but requested was[%ld]... ignoring it! :(\n",p_inode->i_ino,p_tmp->p_inode);
       p_ret = P_LKRG_GENERAL_ERROR;
-      goto p_offload_protected_inode_run_out;
+      goto p_offload_protected_inode_run_out_path;
    }
 
    switch(p_tmp->p_protected_files) {
@@ -692,6 +701,10 @@ void p_offload_protected_inode_run(struct work_struct *p_arg) {
 
    }
 
+p_offload_protected_inode_run_out_path:
+
+   path_put(&p_path);
+
 p_offload_protected_inode_run_out:
 
    /* kstrdup() */
@@ -713,6 +726,7 @@ int p_protected_features_init(void) {
    struct inode *p_inode = NULL;
    struct inode *p_parent_inode = NULL;
    struct file *p_filep = NULL;
+   struct path p_path;
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -762,7 +776,8 @@ int p_protected_features_init(void) {
     * First, check if the file exist... 
     * Maybe someone tries to load us again while we are already there...
     */
-   if ( (p_ret = p_get_inode(P_PROTECTED_FEATURES_INIT,&p_inode,&p_parent_inode)) != P_LKRG_GENERAL_ERROR) {
+   if ( (p_ret = p_get_inode(P_PROTECTED_FEATURES_INIT,&p_inode,&p_parent_inode, &p_path)) != P_LKRG_GENERAL_ERROR) {
+      path_put(&p_path);
       p_print_log(P_LKRG_CRIT,
              "Init file exists! Please delete it first => %s\n",P_PROTECTED_FEATURES_INIT);
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -782,7 +797,7 @@ int p_protected_features_init(void) {
    /* And make it protected, so nobody can delete it :) */
    p_protect_inode(p_filep->f_inode,p_filep->f_path.dentry->d_parent->d_inode,P_PROTECTED_FILES_OPT_FILE);
 
-   if ( (p_ret = p_get_inode(P_LKRG_KMOD_CLI,&p_inode,&p_parent_inode)) == P_LKRG_GENERAL_ERROR) {
+   if ( (p_ret = p_get_inode(P_LKRG_KMOD_CLI,&p_inode,&p_parent_inode, &p_path)) == P_LKRG_GENERAL_ERROR) {
       p_print_log(P_LKRG_CRIT,
              "Can\'t get inode for file => %s :(\n",P_LKRG_KMOD_CLI);
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -792,8 +807,9 @@ int p_protected_features_init(void) {
    p_print_log(P_LKRG_CRIT,
           "Protecting inode[0x%p] parent[0x%p]\n",p_inode,p_parent_inode);
    p_protect_inode(p_inode,p_parent_inode,P_PROTECTED_FILES_OPT_FILE);
+   path_put(&p_path);
 
-   if ( (p_ret = p_get_inode(P_LKRG_USER_CLI,&p_inode,&p_parent_inode)) == P_LKRG_GENERAL_ERROR) {
+   if ( (p_ret = p_get_inode(P_LKRG_USER_CLI,&p_inode,&p_parent_inode, &p_path)) == P_LKRG_GENERAL_ERROR) {
       p_print_log(P_LKRG_CRIT,
              "Can\'t get inode for file => %s :(\n",P_LKRG_USER_CLI);
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -803,6 +819,7 @@ int p_protected_features_init(void) {
    p_print_log(P_LKRG_CRIT,
           "Protecting inode[0x%p] parent[0x%p]\n",p_inode,p_parent_inode);
    p_protect_inode(p_inode,p_parent_inode,P_PROTECTED_FILES_OPT_FILE);
+   path_put(&p_path);
 
    if (p_install_sys_ptrace_hook()) {
       p_print_log(P_LKRG_ERR,

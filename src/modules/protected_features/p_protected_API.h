@@ -68,7 +68,7 @@ int p_protect_p_inode(struct inode *p_inode);
 int p_unprotect_p_inode(struct inode *p_arg);
 struct p_protected_p_inode *p_is_protected_p_inode(struct inode *p_arg);
 
-int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent_out_inode);
+int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent_out_inode, struct path *p_path);
 
 void p_offload_protected_inode(unsigned int p_protected_files, unsigned long p_inode, char *p_path_val);
 void p_offload_protected_inode_run(struct work_struct *p_arg);
