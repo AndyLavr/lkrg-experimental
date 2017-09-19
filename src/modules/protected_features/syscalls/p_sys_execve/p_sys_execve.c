@@ -86,6 +86,7 @@ p_get_inode_from_task_out:
 
 int p_sys_execve_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
+   p_iterate_processes(p_validate_task_f);
    return 0;
 }
 
@@ -93,6 +94,7 @@ int p_sys_execve_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) 
 int p_sys_execve_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
 
    struct inode *p_inode;
+   struct p_ed_process *p_tmp;
 
    p_debug_kprobe_log(
           "Entering function <p_sys_execve_ret>\n");
@@ -100,6 +102,7 @@ int p_sys_execve_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
    p_inode = p_get_inode_from_task(current);
 
    p_debug_kprobe_log(
+//   p_print_log(P_LKRG_CRIT,
           "p_sys_execve_ret: returned value => %ld comm[%s] Pid:%d inode[%ld]\n",
            p_regs->ax,current->comm,current->pid,p_inode->i_ino);
 
@@ -111,6 +114,17 @@ int p_sys_execve_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
          p_protect_process(current->pid);
       }
    }
+
+   // Update process
+   spin_lock(&p_rb_ed_pids_lock);
+   if ( (p_tmp = p_rb_find_ed_pid(&p_global_ed_pids_root, task_pid_nr(current))) != NULL) {
+      // This process is on the ED list - update information!
+      p_print_log(P_LKRG_INFO, "Updating ED pid[%d]\n",current->pid);
+      p_update_ed_process(p_tmp, current);
+   }
+   spin_unlock(&p_rb_ed_pids_lock);
+
+   p_iterate_processes(p_validate_task_f);
 
    p_debug_kprobe_log(
           "Leaving function <p_sys_execve_ret>\n");

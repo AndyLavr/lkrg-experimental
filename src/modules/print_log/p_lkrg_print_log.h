@@ -21,25 +21,28 @@
 #include "p_lkrg_log_level_shared.h"
 
 // Everything is fine...
-#define P_LKRG_SUCCESS            0x0
+#define P_LKRG_SUCCESS                        0x0
 
 // General error
-#define P_LKRG_GENERAL_ERROR      -1
+#define P_LKRG_GENERAL_ERROR                  -1
 
 // Can't find (resolve) "kallsyms_lookup_name" function
-#define P_LKRG_RESOLVER_ERROR     -100
+#define P_LKRG_RESOLVER_ERROR                 -100
 
 // Can't initialize kmod module
-#define P_LKRG_KMOD_ERROR         -101
+#define P_LKRG_KMOD_ERROR                     -101
 
 // Can't generate database - hashes
-#define P_LKRG_DATABASE_ERROR     -102
+#define P_LKRG_DATABASE_ERROR                 -102
 
 // Can't initialize protected features
-#define P_LKRG_PROTECTED_ERROR    -103
+#define P_LKRG_PROTECTED_FEATURES_ERROR       -103
 
 // Can't register hot CPU plug[in/out] handler
-#define P_LKRG_HPCPU_ERROR        -104
+#define P_LKRG_HPCPU_ERROR                    -104
+
+// Can't register hot CPU plug[in/out] handler
+#define P_LKRG_EXPLOIT_DETECTION_ERROR        -105
 
 // Enable hash from IOMMU table? - not recommended!
 // By default disabled

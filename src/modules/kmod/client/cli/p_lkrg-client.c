@@ -43,7 +43,7 @@
 #define PI3_MODULE_PARAM_PF   "pi3_path"
 //#define PI3_MODULE_CTRL_NAME "p_ctrl_module"
 #define PI3_MODULE_CTRL_NAME "p_lkrg_kmod_cli"
-#define P_DEFAULT_PATH   "/root/p_lkrg/output/client/kmod/"PI3_MODULE_CTRL_NAME".ko"
+#define P_DEFAULT_PATH   "/root/p_lkrg-beta/output/client/kmod/"PI3_MODULE_CTRL_NAME".ko"
 
 #define VAL_TOO_BIG(a,b)             \
 ({                                   \

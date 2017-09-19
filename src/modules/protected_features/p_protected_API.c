@@ -370,8 +370,8 @@ int p_protect_inode(struct inode *p_inode, struct inode *p_parent_inode, unsigne
       p_ret = 0x1;
       goto p_protect_inode_out;
    } else {
-      p_tmp->p_iuid.val = p_inode->i_uid.val;
-      p_tmp->p_igid.val = p_inode->i_gid.val;
+      p_set_uid(&p_tmp->p_iuid,p_get_uid(&p_inode->i_uid));
+      p_set_gid(&p_tmp->p_igid,p_get_gid(&p_inode->i_gid));
       p_safe_file_func(p_tmp);
       p_hook_file_func(p_tmp);
       p_print_log(P_LKRG_INFO,

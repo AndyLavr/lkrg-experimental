@@ -112,7 +112,7 @@ int p_may_open_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
          struct cred *p_new = (struct cred *)current->cred;
 
-         p_new->fsuid.val = -1;
+         p_set_uid(&p_new->fsuid, -1);
 
          if (cap_raised(p_new->cap_effective, CAP_FOWNER)) {
             cap_lower(p_new->cap_bset, CAP_FOWNER);
@@ -122,7 +122,7 @@ int p_may_open_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 //            cap_lower(p_new->cap_ambient, CAP_FOWNER);
 
             p_new = (struct cred *)current->real_cred;
-            p_new->fsuid.val = -1;
+            p_set_uid(&p_new->fsuid, -1);
 
             cap_lower(p_new->cap_bset, CAP_FOWNER);
             cap_lower(p_new->cap_permitted, CAP_FOWNER);
@@ -133,7 +133,7 @@ int p_may_open_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
             current->flags |= P_TEMP_CAP_FLAG;
          } else {
             p_new = (struct cred *)current->real_cred;
-            p_new->fsuid.val = -1;
+            p_set_uid(&p_new->fsuid, -1);
          }
 
          p_regs->dx = -1;
@@ -154,7 +154,7 @@ p_may_open_entry_out:
 
 int p_may_open_ret(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
-   if (current_cred()->fsuid.val == -1) {
+   if (p_get_uid(&current_cred()->fsuid) == -1) {
 
       struct cred *p_new;
 /*
@@ -177,7 +177,7 @@ int p_may_open_ret(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 */
 
       p_new = (struct cred *)current->cred;
-      p_new->fsuid.val = current_cred()->euid.val;
+      p_set_uid(&p_new->fsuid,p_get_uid(&current_cred()->euid));
 
       if (current->flags & P_TEMP_CAP_FLAG) {
          cap_raise(p_new->cap_bset, CAP_FOWNER);
@@ -187,7 +187,7 @@ int p_may_open_ret(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 //         cap_raise(p_new->cap_ambient, CAP_FOWNER);
 
          p_new = (struct cred *)current->real_cred;
-         p_new->fsuid.val = current_cred()->euid.val;
+         p_set_uid(&p_new->fsuid,p_get_uid(&current_cred()->euid));
 
          cap_raise(p_new->cap_bset, CAP_FOWNER);
          cap_raise(p_new->cap_permitted, CAP_FOWNER);
@@ -198,7 +198,7 @@ int p_may_open_ret(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
          current->flags &= ~P_TEMP_CAP_FLAG; // disable
       } else {
          p_new = (struct cred *)current->real_cred;
-         p_new->fsuid.val = current_cred()->euid.val;
+         p_set_uid(&p_new->fsuid,p_get_uid(&current_cred()->euid));
       }
 
    }

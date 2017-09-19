@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef P_LKRG_DATABASE
-#define P_LKRG_DATABASE
+#ifndef P_LKRG_DATABASE_H
+#define P_LKRG_DATABASE_H
 
 /*
  * Memory block hash

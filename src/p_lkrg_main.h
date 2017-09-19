@@ -69,11 +69,17 @@
 #include "modules/kmod/p_kmod.h"                              // Kernel's modules module
 #include "modules/notifiers/p_notifiers.h"                    // Notifiers module
 #include "modules/self-defense/hiding/p_hiding.h"             // Hiding module
+#include "modules/wrap/p_struct_wrap.h"                       // Wrapping module
 
 /*
  * Protected features
  */
 #include "modules/protected_features/p_protected_API.h"
+
+/*
+ * Exploit Detection
+ */
+#include "modules/exploit_detection/p_exploit_detection.h"
 
 
 extern unsigned int p_init_log_level;

@@ -84,10 +84,10 @@ static inline void p_iget_file(struct inode *inode) {
    inode->i_flags |= S_IMMUTABLE;
 
    /* Set user owner to non-available value */
-   inode->i_uid.val = -1;
+   p_set_uid(&inode->i_uid,-1);
 
    /* Set group owner to non-available value */
-   inode->i_gid.val = -1;
+   p_set_gid(&inode->i_gid, -1);
 
    /* Mark inode as dirty */
    mark_inode_dirty(inode);
@@ -109,10 +109,10 @@ static inline void p_iput_file(struct inode *inode, kuid_t p_uid, kgid_t p_gid) 
    inode->i_flags &= ~(S_IMMUTABLE);
 
    /* Restore original user owner value */
-   inode->i_uid.val = p_uid.val;
+   p_set_uid(&inode->i_uid, p_get_uid(&p_uid));
 
    /* Restore original group owner value */
-   inode->i_gid.val = p_gid.val;
+   p_set_gid(&inode->i_gid, p_get_gid(&p_gid));
 
    /* Mark inode as dirty */
    mark_inode_dirty(inode);
@@ -217,8 +217,10 @@ static inline void p_dump_file_ops(const struct file_operations *p_arg) {
    p_debug_log(P_LKRG_DBG, "llseek => 0x%p\n",p_arg->llseek);
    p_debug_log(P_LKRG_DBG, "read => 0x%p\n",p_arg->read);
    p_debug_log(P_LKRG_DBG, "write => 0x%p\n",p_arg->write);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,16,0)
    p_debug_log(P_LKRG_DBG, "read_iter => 0x%p\n",p_arg->read_iter);
    p_debug_log(P_LKRG_DBG, "write_iter => 0x%p\n",p_arg->write_iter);
+#endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,11,0)
    p_debug_log(P_LKRG_DBG, "iterate => 0x%p\n",p_arg->iterate);
 #endif

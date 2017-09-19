@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef P_LKRG_KERNEL_MODULES
-#define P_LKRG_KERNEL_MODULES
+#ifndef P_LKRG_KERNEL_MODULES_H
+#define P_LKRG_KERNEL_MODULES_H
 
 #include "p_kmod_cli_srv.h"
 

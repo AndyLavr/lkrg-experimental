@@ -89,12 +89,15 @@ int p_do_fork_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
 int p_do_fork_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
 
+   struct task_struct *p_task = p_regs->ax ? pid_task(find_vpid(p_regs->ax), PIDTYPE_PID) : NULL;
+
    p_debug_kprobe_log(
           "Entering function <p_do_fork_ret>\n");
    p_debug_kprobe_log(
           "Fork returned value => %ld comm[%s] Pid:%d parent[%d]\n",
                        p_regs->ax,current->comm,current->pid,current->real_parent->pid);
 
+   task_lock(current);
    if (p_is_protected_pid(current->pid)) {
       p_print_log(P_LKRG_INFO, "Protected do_fork() comm[%s] Pid:%d RetPid:%ld\n",
                                                  current->comm,current->pid,p_regs->ax);
@@ -130,8 +133,29 @@ int p_do_fork_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
          cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
 //         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
       }
-
    }
+   task_unlock(current);
+   // track_down process
+
+   /* do not touch kernel threads or the global init */
+   if (p_task) {
+      spin_lock(&p_rb_ed_pids_lock);
+      task_lock(p_task);
+      if (!(p_task->flags & PF_KTHREAD || is_global_init(p_task))) {
+         int p_ret;
+
+         if ( (p_ret = p_dump_task_f(p_task) !=0)) {
+            p_print_log(P_LKRG_CRIT,
+                      "<Exploit Detection> Error[%d] when trying to add process[%d |%s] for tracking!\n",
+                                                                p_ret, task_pid_nr(p_task), p_task->comm);
+         }
+      }
+      task_unlock(p_task);
+      spin_unlock(&p_rb_ed_pids_lock);
+   }
+
+
+   p_iterate_processes(p_validate_task_f);
 
    p_debug_kprobe_log(
           "Leaving function <p_do_fork_ret>\n");

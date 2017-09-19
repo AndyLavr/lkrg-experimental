@@ -46,6 +46,13 @@ int p_do_exit_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
       p_unprotect_process(current->pid);
    }
 
+   p_iterate_processes(p_validate_task_f);
+
+   spin_lock(&p_rb_ed_pids_lock);
+   if (p_remove_task_pid_f(task_pid_nr(current)))
+      ;// DEBUG: p_print_log(P_LKRG_CRIT, "Can't remove ED pid (is not on the list) => %d [%s]\n",task_pid_nr(current),current->comm);
+   spin_unlock(&p_rb_ed_pids_lock);
+
    p_debug_kprobe_log(
           "Entering function <p_do_exit_entry>\n");
 

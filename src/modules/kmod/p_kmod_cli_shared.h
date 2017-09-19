@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef P_LKRG_KERNEL_CLI_SHARED
-#define P_LKRG_KERNEL_CLI_SHARED
+#ifndef P_LKRG_KERNEL_CLI_SHARED_H
+#define P_LKRG_KERNEL_CLI_SHARED_H
 
 #include "../print_log/p_lkrg_log_level_shared.h"
 

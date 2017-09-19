@@ -17,6 +17,7 @@ P_CLI_KMOD = "p_lkrg_kmod_cli.ko"
 obj-m += p_lkrg.o
 p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/hashing/p_super_fast_hash.o \
+               src/modules/wrap/p_struct_wrap.o \
                src/modules/hashing/p_crypto_sha1.o \
                src/modules/integrity_timer/p_integrity_timer.o \
                src/modules/kmod/p_kmod.o \
@@ -42,6 +43,17 @@ p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/protected_features/protected_process_func/p_process_vm_rw/p_process_vm_rw.o \
                src/modules/protected_features/protected_process_func/p_kprobe_seq_start/p_kprobe_seq_start.o \
                src/modules/protected_features/p_protected_API.o \
+               src/modules/exploit_detection/p_rb_ed_trees/p_rb_ed_pids/p_rb_ed_pids_tree.o \
+               src/modules/exploit_detection/syscalls/p_sys_setuid/p_sys_setuid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setreuid/p_sys_setreuid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setresuid/p_sys_setresuid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setfsuid/p_sys_setfsuid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setgid/p_sys_setgid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setregid/p_sys_setregid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setresgid/p_sys_setresgid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setfsgid/p_sys_setfsgid.o \
+               src/modules/exploit_detection/syscalls/p_sys_setgroups/p_sys_setgroups.o \
+               src/modules/exploit_detection/p_exploit_detection.o \
                src/p_lkrg_main.o
 
 

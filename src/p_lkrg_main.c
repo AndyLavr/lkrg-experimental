@@ -29,6 +29,7 @@ static int __init p_lkrg_register(void) {
 
    int p_ret = P_LKRG_SUCCESS;
 
+
    memset(&p_lkrg_global_ctrl,0x0,sizeof(p_lkrg_global_ctrl_struct));
    p_lkrg_global_ctrl.p_timestamp = 15;        // seconds
    if (p_init_log_level >= P_LOG_LEVEL_MAX)
@@ -49,6 +50,15 @@ static int __init p_lkrg_register(void) {
                "kallsyms_lookup_name() => 0x%lx\n",(long)p_kallsyms_lookup_name);
      }
 #endif
+   /*
+    * First, we need to plant *kprobes... Before DB is created!
+    */
+   if (p_exploit_detection_init()) {
+      p_print_log(P_LKRG_CRIT,
+             "Can't initialize exploit detection features! Exiting...\n");
+      p_ret = P_LKRG_EXPLOIT_DETECTION_ERROR;
+      goto p_main_error;
+   }
 
    /*
     * First, we need to plant *kprobes... Before DB is created!
@@ -56,13 +66,15 @@ static int __init p_lkrg_register(void) {
    if (p_protected_features_init()) {
       p_print_log(P_LKRG_CRIT,
              "Can't initialize protected features! Exiting...\n");
-      return P_LKRG_PROTECTED_ERROR;
+      p_ret = P_LKRG_PROTECTED_FEATURES_ERROR;
+      goto p_main_error;
    }
 
    if (p_offload_cache_init()) {
       p_print_log(P_LKRG_CRIT,
              "Can\'t initialize offloading cache :(\n");
-      return P_LKRG_GENERAL_ERROR;
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_main_error;
    }
 
    /*
@@ -83,9 +95,13 @@ static int __init p_lkrg_register(void) {
    }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
+   register_hotcpu_notifier(&p_cpu_notifier);
+#else
    cpu_notifier_register_begin();
    __register_hotcpu_notifier(&p_cpu_notifier);
    cpu_notifier_register_done();
+#endif
 #else
    if ( (p_hot_cpus = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
                          "x86/p_lkrg:online",
@@ -116,6 +132,7 @@ p_main_error:
       kzfree(p_lkrg_random_ctrl_password);
    p_offload_cache_delete();
    p_protected_features_exit();
+   p_exploit_detection_exit();
 
    return p_ret;
 }
@@ -134,9 +151,13 @@ static void __exit p_lkrg_deregister(void) {
    p_deregister_notifiers();
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
+   unregister_hotcpu_notifier(&p_cpu_notifier);
+#else
    cpu_notifier_register_begin();
    __unregister_hotcpu_notifier(&p_cpu_notifier);
    cpu_notifier_register_done();
+#endif
 #else
    cpuhp_remove_state_nocalls(p_hot_cpus);
 #endif
@@ -146,8 +167,9 @@ static void __exit p_lkrg_deregister(void) {
    kzfree(p_db.p_IDT_MSR_CRx_array);
    kzfree(p_lkrg_random_ctrl_password);
    p_offload_cache_delete();
-
    p_protected_features_exit();
+   p_exploit_detection_exit();
+
 }
 
 
