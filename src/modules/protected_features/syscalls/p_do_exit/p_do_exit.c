@@ -63,22 +63,13 @@ int p_do_exit_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
 int p_do_exit_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
 
-/* We don't do anythink here so it is not worth to print any debug!
-// STRONG_DEBUG
    p_debug_kprobe_log(
           "Entering function <p_do_exit_ret>\n");
 
-   p_debug_kprobe_log(
-               "Returned value => %ld | %ld\n", p_regs->ax,p_regs->orig_ax);
-   p_debug_kprobe_log(
-               "comm[%s] current->pid[%d] tgid[%d] Regs:\n",
-                                  current->comm,current->pid,current->tgid);
-#endif
+   p_iterate_processes(p_validate_task_f);
 
-// STRONG_DEBUG
    p_debug_kprobe_log(
           "Entering function <p_do_exit_ret>\n");
-*/
 
    return 0x0;
 }
