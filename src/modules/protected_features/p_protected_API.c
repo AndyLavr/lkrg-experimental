@@ -117,6 +117,7 @@ int p_protect_process(pid_t p_arg) {
    }
 
    p_tmp->p_pid = p_arg;
+   spin_lock(&p_rb_pids_lock);
    p_rb_init_pid_node(&p_tmp->p_rb);
    if (p_rb_add_pid(&p_global_pids_root, p_arg, p_tmp)) {
       p_print_log(P_LKRG_INFO,
@@ -131,6 +132,8 @@ int p_protect_process(pid_t p_arg) {
    }
 
 p_protect_process_out:
+
+   spin_unlock(&p_rb_pids_lock);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -149,6 +152,7 @@ int p_unprotect_process(pid_t p_arg) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_unprotect_process>\n");
 
+   spin_lock(&p_rb_pids_lock);
    if ( (p_tmp = p_rb_find_pid(&p_global_pids_root, p_arg)) == NULL) {
       // This process is not on the list!
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -160,6 +164,8 @@ int p_unprotect_process(pid_t p_arg) {
    p_protected_lower_caps(p_arg);
 
 p_unprotect_process_out:
+
+   spin_unlock(&p_rb_pids_lock);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -177,7 +183,9 @@ inline int p_is_protected_pid(pid_t p_arg) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_is_protected_pid>\n");
 
+   spin_lock(&p_rb_pids_lock);
    p_ret = p_rb_find_pid(&p_global_pids_root, p_arg) ? 1 : 0;
+   spin_unlock(&p_rb_pids_lock);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -362,6 +370,7 @@ int p_protect_inode(struct inode *p_inode, struct inode *p_parent_inode, unsigne
    p_tmp->p_inode = p_inode;
    p_tmp->p_parent_inode = p_parent_inode;
    p_tmp->p_opt = p_opt;
+   spin_lock(&p_rb_inodes_lock);
    p_rb_init_inode_node(&p_tmp->p_rb);
    if (p_rb_add_inode(&p_global_inodes_root, p_tmp->p_inode, p_tmp)) {
       p_print_log(P_LKRG_INFO,
@@ -381,6 +390,8 @@ int p_protect_inode(struct inode *p_inode, struct inode *p_parent_inode, unsigne
 
 p_protect_inode_out:
 
+   spin_unlock(&p_rb_inodes_lock);
+
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_protect_inode> (p_ret => %d)\n",p_ret);
@@ -397,6 +408,7 @@ int p_unprotect_inode(struct inode *p_arg, unsigned int p_opt) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_unprotect_inode>\n");
 
+   spin_lock(&p_rb_inodes_lock);
    if ( (p_tmp = p_rb_find_inode(&p_global_inodes_root, p_arg)) == NULL) {
       // This inode is not on the list!
       p_ret = P_LKRG_GENERAL_ERROR;
@@ -420,6 +432,8 @@ int p_unprotect_inode(struct inode *p_arg, unsigned int p_opt) {
 
 p_unprotect_inode_out:
 
+   spin_unlock(&p_rb_inodes_lock);
+
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
           "Leaving function <p_unprotect_inode> (p_ret => %d)\n",p_ret);
@@ -435,7 +449,9 @@ int p_is_protected_inode(struct inode *p_arg) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_is_protected_inode>\n");
 
+   spin_lock(&p_rb_inodes_lock);
    p_ret = p_rb_find_inode(&p_global_inodes_root, p_arg) ? 1 : 0;
+   spin_unlock(&p_rb_inodes_lock);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -804,8 +820,6 @@ int p_protected_features_init(void) {
       goto p_protected_features_init_err;
    }
 
-   p_print_log(P_LKRG_CRIT,
-          "Protecting inode[0x%p] parent[0x%p]\n",p_inode,p_parent_inode);
    p_protect_inode(p_inode,p_parent_inode,P_PROTECTED_FILES_OPT_FILE);
    path_put(&p_path);
 
@@ -816,8 +830,6 @@ int p_protected_features_init(void) {
       goto p_protected_features_init_err;
    }
 
-   p_print_log(P_LKRG_CRIT,
-          "Protecting inode[0x%p] parent[0x%p]\n",p_inode,p_parent_inode);
    p_protect_inode(p_inode,p_parent_inode,P_PROTECTED_FILES_OPT_FILE);
    path_put(&p_path);
 
@@ -917,8 +929,12 @@ int p_protected_features_init(void) {
    p_ret = P_LKRG_SUCCESS;
 
 #ifdef P_LKRG_DEBUG
+   spin_lock(&p_rb_inodes_lock);
    P_DUMP_RB_INODES_TREE;
+   spin_unlock(&p_rb_inodes_lock);
+   spin_lock(&p_rb_pids_lock);
    P_DUMP_RB_PIDS_TREE;
+   spin_unlock(&p_rb_pids_lock);
 #endif
 
    goto p_protected_features_init_out;

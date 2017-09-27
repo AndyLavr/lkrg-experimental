@@ -43,6 +43,7 @@ struct p_protected_pid {
 
 extern struct kmem_cache *p_pids_cache;
 extern struct rb_root p_global_pids_root;
+extern spinlock_t p_rb_pids_lock;
 
 
 static inline void p_rb_init_pid_node(struct rb_node *rb) {

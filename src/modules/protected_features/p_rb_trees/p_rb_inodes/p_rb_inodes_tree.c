@@ -21,6 +21,8 @@
 struct kmem_cache *p_inodes_cache = NULL;
 struct rb_root p_global_inodes_root = RB_ROOT;
 
+/* Used for red-black-tree inode and red-black-tree parent inode synchronization */
+DEFINE_SPINLOCK(p_rb_inodes_lock);
 
 struct p_protected_inode *p_rb_find_inode(struct rb_root *p_root, struct inode *p_arg) {
 
@@ -154,6 +156,8 @@ void p_delete_rb_inodes(void) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_delete_rb_inodes>\n");
 
+// spin_lock(&p_rb_inodes_lock); <- p_unprotect_inode() takes the lock. Moreover,
+// this function is only called during module deletion, so not really needed
    for (p_node = rb_first(&p_global_inodes_root); p_node; p_node = rb_next(p_node)) {
       p_tmp = rb_entry(p_node, struct p_protected_inode, p_rb);
       p_print_log(P_LKRG_INFO, "Deleting inode => 0x%p\n",p_tmp->p_inode);
@@ -161,6 +165,7 @@ void p_delete_rb_inodes(void) {
 //      p_free_inodes(p_tmp);
    }
    kmem_cache_destroy(p_inodes_cache);
+// spin_unlock(&p_rb_inodes_lock);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,

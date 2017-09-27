@@ -53,6 +53,8 @@ struct p_protected_inode {
 
 extern struct kmem_cache *p_inodes_cache;
 extern struct rb_root p_global_inodes_root;
+/* Used for red-black-tree inode and red-black-tree parent inode synchronization */
+extern spinlock_t p_rb_inodes_lock;
 
 
 static inline void p_rb_init_inode_node(struct rb_node *rb) {
