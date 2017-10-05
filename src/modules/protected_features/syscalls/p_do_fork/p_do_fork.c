@@ -47,9 +47,9 @@ int p_do_fork_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
    if (!p_is_protected_pid(current->pid)) {
       /* It should NOT have CAP_SYS_RAWIO capability */
-//      if (capable(CAP_SYS_RAWIO)) {
-
 /*
+      if (capable(CAP_SYS_RAWIO)) {
+
          struct cred *p_cred;
 
          p_cred = prepare_creds();
@@ -59,24 +59,9 @@ int p_do_fork_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
          }
 */
 
-      struct cred *p_new = (struct cred *)current->cred;
+      if (cap_raised(current->cred->cap_effective, CAP_SYS_RAWIO))
+         p_protected_lower_caps(task_pid_nr(current));
 
-      if (cap_raised(p_new->cap_effective, CAP_SYS_RAWIO)) {
-         cap_lower(p_new->cap_bset, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_permitted, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_effective, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
-//         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
-
-         p_new = (struct cred *)current->real_cred;
-
-         cap_lower(p_new->cap_bset, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_permitted, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_effective, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
-//         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
-      }
-//      }
    }
 
    p_debug_kprobe_log(
@@ -115,24 +100,9 @@ int p_do_fork_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
          }
       }
 */
+      if (cap_raised(current->cred->cap_effective, CAP_SYS_RAWIO))
+         p_protected_lower_caps(task_pid_nr(current));
 
-      struct cred *p_new = (struct cred *)current->cred;
-
-      if (cap_raised(p_new->cap_effective, CAP_SYS_RAWIO)) {
-         cap_lower(p_new->cap_bset, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_permitted, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_effective, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
-//         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
-
-         p_new = (struct cred *)current->real_cred;
-
-         cap_lower(p_new->cap_bset, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_permitted, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_effective, CAP_SYS_RAWIO);
-         cap_lower(p_new->cap_inheritable, CAP_SYS_RAWIO);
-//         cap_lower(p_new->cap_ambient, CAP_SYS_RAWIO);
-      }
    }
    task_unlock(current);
    // track_down process

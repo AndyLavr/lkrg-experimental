@@ -144,6 +144,8 @@ int p_may_open_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
 p_may_open_entry_out:
 
+   p_iterate_processes(p_validate_task_f);
+
 // STRONG_DEBUG
    p_debug_kprobe_log(
           "Leaving function <p_may_open_entry>\n");
@@ -202,6 +204,8 @@ int p_may_open_ret(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
       }
 
    }
+
+   p_iterate_processes(p_validate_task_f);
 
    return 0x0;
 }

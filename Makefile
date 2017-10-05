@@ -53,6 +53,8 @@ p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/exploit_detection/syscalls/p_sys_setresgid/p_sys_setresgid.o \
                src/modules/exploit_detection/syscalls/p_sys_setfsgid/p_sys_setfsgid.o \
                src/modules/exploit_detection/syscalls/p_sys_setgroups/p_sys_setgroups.o \
+               src/modules/exploit_detection/syscalls/p_do_init_module/p_do_init_module.o \
+               src/modules/exploit_detection/syscalls/p_sys_delete_module/p_sys_delete_module.o \
                src/modules/exploit_detection/p_exploit_detection.o \
                src/p_lkrg_main.o
 
