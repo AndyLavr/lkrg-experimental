@@ -56,6 +56,8 @@
 #include <crypto/hash.h>
 #include <linux/scatterlist.h>
 
+#include <linux/signal.h>
+
 
 /*
  * p_lkrg modules

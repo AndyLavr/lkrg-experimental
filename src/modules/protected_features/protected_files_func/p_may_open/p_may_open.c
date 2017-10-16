@@ -205,7 +205,7 @@ int p_may_open_ret(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
 
    }
 
-   p_iterate_processes(p_validate_task_f);
+//   p_iterate_processes(p_validate_task_f);
 
    return 0x0;
 }
