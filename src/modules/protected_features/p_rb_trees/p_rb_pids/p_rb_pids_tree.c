@@ -154,14 +154,17 @@ void p_delete_rb_pids(void) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_delete_rb_pids>\n");
 
-   spin_lock(&p_rb_pids_lock);
-   for (p_node = rb_first(&p_global_pids_root); p_node; p_node = rb_next(p_node)) {
-      p_tmp = rb_entry(p_node, struct p_protected_pid, p_rb);
-      p_print_log(P_LKRG_INFO, "Deleting PID => %d\n",p_tmp->p_pid);
-      p_free_pids(p_tmp);
+   if (p_pids_cache) {
+      spin_lock(&p_rb_pids_lock);
+      for (p_node = rb_first(&p_global_pids_root); p_node; p_node = rb_next(p_node)) {
+         p_tmp = rb_entry(p_node, struct p_protected_pid, p_rb);
+         p_print_log(P_LKRG_INFO, "Deleting PID => %d\n",p_tmp->p_pid);
+         p_free_pids(p_tmp);
+      }
+      kmem_cache_destroy(p_pids_cache);
+      p_pids_cache = NULL;
+      spin_unlock(&p_rb_pids_lock);
    }
-   kmem_cache_destroy(p_pids_cache);
-   spin_unlock(&p_rb_pids_lock);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,

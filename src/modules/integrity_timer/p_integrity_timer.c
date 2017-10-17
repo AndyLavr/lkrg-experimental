@@ -79,7 +79,8 @@ void p_offload_cache_delete(void) {
    p_debug_log(P_LKRG_STRONG_DBG,
           "Entering function <p_offload_cache_delete>\n");
 
-   kmem_cache_destroy(p_offload_cache);
+   if (p_offload_cache)
+      kmem_cache_destroy(p_offload_cache);
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
