@@ -76,7 +76,7 @@ unsigned int p_log_level;
 unsigned int p_force_run;
 unsigned int p_block_modules;
 #ifdef P_LKRG_UNHIDE
-unsigned int p_unhide_module;
+unsigned int p_hide_module;
 #endif
 unsigned int p_protected_process;
 unsigned int p_pid;
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
    /* Default value - leave this option untouched */
    p_timestamp = p_log_level = p_force_run = p_block_modules = 0xFFFFFFFF;
 #ifdef P_LKRG_UNHIDE
-   p_unhide_module = 0xFFFFFFFF;
+   p_hide_module = 0xFFFFFFFF;
 #endif
    p_protected_process = p_pid = p_protected_file = p_pf_low = p_pf_high = 0xFFFFFFFF;
 
@@ -191,20 +191,20 @@ int main(int argc, char *argv[]) {
 #ifdef P_LKRG_UNHIDE
          case 'u':
             printf("\t   [?] Changing hide p_lkrg module flag...\r");
-            p_unhide_module = p_get_int(optarg,&p_tmp_err);
-            if (p_tmp_err || (p_unhide_module != 1 && p_unhide_module != 0)) {
+            p_hide_module = p_get_int(optarg,&p_tmp_err);
+            if (p_tmp_err || (p_hide_module != 1 && p_hide_module != 0)) {
                printf("\t   [-] Changing hide p_lkrg flag... FAILED!\n");
                if (p_tmp_err) {
                   printf("\t     *) Bad number format! - [%s]\n\n",optarg);
                   exit(-1);
                }
-               printf("\t     *) Bad value for hide module flag! - [%u]\n\n",p_unhide_module);
+               printf("\t     *) Bad value for hide module flag! - [%u]\n\n",p_hide_module);
                exit(-1);
             }
             printf("\t   [+] Changing hide p_lkrg module flag... DONE!\n");
             printf("\t     *) New hide p_lkrg module flag is %u (%s hiding p_lkrg module).\n",
-                                                                           p_unhide_module,
-                                                                           (p_unhide_module)?"Enable":
+                                                                           p_hide_module,
+                                                                           (p_hide_module)?"Enable":
                                                                            "Disable");
             break;
 #endif
@@ -346,7 +346,7 @@ int main(int argc, char *argv[]) {
    if (p_timestamp == 0xFFFFFFFF && p_log_level == 0xFFFFFFFF &&
        p_force_run == 0xFFFFFFFF && p_block_modules == 0xFFFFFFFF
 #ifdef P_LKRG_UNHIDE
-       && p_unhide_module == 0xFFFFFFFF
+       && p_hide_module == 0xFFFFFFFF
 #endif
        && (p_protected_process == 0xFFFFFFFF || p_pid == 0xFFFFFFFF)
        && (p_protected_file == 0xFFFFFFFF || p_pf_low == 0xFFFFFFFF ||
@@ -481,8 +481,8 @@ void usage(char *arg) {
    printf("\t\t                      1 - block\n");
 #ifdef P_LKRG_UNHIDE
    printf("\t\t   -u <value>    : Configure (Un)hide p_lkrg module flag:\n");
-   printf("\t\t                      0 - hide\n");
-   printf("\t\t                      1 - unhide\n");
+   printf("\t\t                      1 - hide\n");
+   printf("\t\t                      0 - unhide\n");
 #endif
    printf("\t\t   -P <value>   : Protected Process action (must be used with -p switch):\n");
    printf("\t\t                      0 - Unprotect process\n");
@@ -1118,7 +1118,7 @@ int p_change_ctrl_struct(void *p_buf) {
    *p_val++ = p_block_modules; // (Un)Block modules ?
 
 #ifdef P_LKRG_UNHIDE
-   *p_val++ = p_unhide_module; // Unhide p_lkrg module
+   *p_val++ = p_hide_module; // Hide / Unhide p_lkrg module
 #else
    *p_val++ = 0xffffffff; // Reserved
 #endif

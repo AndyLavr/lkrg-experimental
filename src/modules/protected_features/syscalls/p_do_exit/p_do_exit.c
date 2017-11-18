@@ -46,7 +46,7 @@ int p_do_exit_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
       p_unprotect_process(current->pid);
    }
 
-   p_iterate_processes(p_validate_task_f);
+   p_ed_enforce_validation();
 
    spin_lock(&p_rb_ed_pids_lock);
    if (p_remove_task_pid_f(task_pid_nr(current)))
@@ -66,7 +66,7 @@ int p_do_exit_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
    p_debug_kprobe_log(
           "Entering function <p_do_exit_ret>\n");
 
-   p_iterate_processes(p_validate_task_f);
+   p_ed_enforce_validation();
 
    p_debug_kprobe_log(
           "Entering function <p_do_exit_ret>\n");

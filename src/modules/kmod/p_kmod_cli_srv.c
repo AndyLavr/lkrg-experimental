@@ -258,7 +258,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
    unsigned int *p_tmp_read;
    unsigned int p_timestamp,p_log_level,p_force_run,p_block_modules;
 #ifdef P_LKRG_UNHIDE
-   unsigned int p_unhide_module;
+   unsigned int p_hide_module;
 #else
    unsigned int p_r0;
 #endif
@@ -369,7 +369,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
    p_block_modules       = *p_tmp_read++;
 
 #ifdef P_LKRG_UNHIDE
-   p_unhide_module       = *p_tmp_read++;
+   p_hide_module       = *p_tmp_read++;
 #else
    p_r0                  = *p_tmp_read++;
 #endif
@@ -432,7 +432,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 
 #ifdef P_LKRG_UNHIDE
    p_print_log(P_LKRG_INFO,
-          "\tUnhide myself => [0x%x]\n\n",p_unhide_module);
+          "\tHide myself => [0x%x]\n\n",p_hide_module);
 #else
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -453,7 +453,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 
    /* Validate */
    if (p_validate_ctrl_structure(p_timestamp,p_log_level,p_force_run,
-                                 p_block_modules,p_unhide_module,
+                                 p_block_modules,p_hide_module,
                                  p_protected_process,p_pid,p_protected_files,
                                  p_inode)) {
       p_print_log(P_LKRG_INFO,"CTRL structure validation failed! Non action taken.\n");
@@ -517,13 +517,13 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
     */
 
    /* (Un)hide myself? */
-   if (p_unhide_module != 0xFFFFFFFF) {
-      if (p_unhide_module) {
-         p_unhide_itself(); // Unhide module!
+   if (p_hide_module != 0xFFFFFFFF) {
+      if (p_hide_module) {
+         p_hide_itself(); // Unhide module!
       } else {
-         p_hide_itself(); // Hide module!
+         p_unhide_itself(); // Hide module!
       }
-      p_lkrg_global_ctrl.p_unhide_module = p_unhide_module;
+      p_lkrg_global_ctrl.p_hide_module = p_hide_module;
    }
 #endif
 
@@ -536,7 +536,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 
 inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
                                      unsigned int p_force, unsigned int p_block,
-                                     unsigned int p_unhide, unsigned int p_p_process,
+                                     unsigned int p_hide, unsigned int p_p_process,
                                      unsigned int p_pid, unsigned int p_p_files,
                                      unsigned long p_inode) {
 
@@ -575,10 +575,10 @@ inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
    }
 
    p_print_log(P_LKRG_INFO,
-          "\tUnhide module validation => [0x%x]\n",p_unhide);
+          "\tHide module validation => [0x%x]\n",p_hide);
 
 #ifdef P_LKRG_UNHIDE
-   if (p_unhide != 0x1 && p_unhide != 0x0 && p_unhide != 0xFFFFFFFF) {
+   if (p_hide != 0x1 && p_hide != 0x0 && p_hide != 0xFFFFFFFF) {
       goto p_validate_ctrl_structure_err;
    }
 #endif

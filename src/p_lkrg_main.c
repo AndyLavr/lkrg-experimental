@@ -37,7 +37,7 @@ static int __init p_lkrg_register(void) {
    else
       p_lkrg_global_ctrl.p_log_level = p_init_log_level;
    p_lkrg_global_ctrl.p_block_modules = 0x1;   // Block loading new modules
-   p_lkrg_global_ctrl.p_unhide_module = 0x1;   // We are initially not hidden
+   p_lkrg_global_ctrl.p_hide_module   = 0x0;   // We are initially not hidden
 
    if (get_kallsyms_address() != P_LKRG_SUCCESS) {
       p_print_log(P_LKRG_CRIT,
@@ -118,7 +118,9 @@ static int __init p_lkrg_register(void) {
    p_register_notifiers();
 
    mutex_lock(&module_mutex);
-//   p_hide_itself();
+   if (p_lkrg_global_ctrl.p_hide_module) {
+       p_hide_itself();
+    }
    mutex_unlock(&module_mutex);
 
    return P_LKRG_SUCCESS;

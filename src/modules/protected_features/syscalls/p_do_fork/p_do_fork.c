@@ -125,7 +125,7 @@ int p_do_fork_ret(struct kretprobe_instance *ri, struct pt_regs *p_regs) {
    }
 
 
-   p_iterate_processes(p_validate_task_f);
+   p_ed_enforce_validation();
 
    p_debug_kprobe_log(
           "Leaving function <p_do_fork_ret>\n");
