@@ -917,6 +917,14 @@ void p_check_integrity(struct work_struct *p_work) {
                         // TODO: Dump module
                      }
                   }
+               } else {
+                  /* Maybe we have found LKRG control module ? */
+                  if (p_module_kobj_tmp[p_tmp_hash].p_mod->state == MODULE_STATE_LIVE) {
+                     p_print_log(P_LKRG_CRIT,
+                                 "** EXTRA MODULE HAS 'LIVE' STATE BUT _BLOCKING MODULES_ IS ENABLED **\n"
+                                 "** IT IS ONLY POSSIBLE FOR LKRG CONTROL MODULE ;-) **\n"
+                                 "** !! MOST LIKELY SYSTEM IS STABLE !! **\n");
+                  }
                }
             }
          }
@@ -1174,6 +1182,14 @@ void p_check_integrity(struct work_struct *p_work) {
                         // MOST LIKELY WE ARE HACKED!
                         // TODO: Dump module
                      }
+                  }
+               } else {
+                  /* Maybe we have found LKRG control module ? */
+                  if (p_module_kobj_tmp[p_tmp_hash].p_mod->state == MODULE_STATE_LIVE) {
+                     p_print_log(P_LKRG_CRIT,
+                                 "** EXTRA MODULE HAS 'LIVE' STATE BUT _BLOCKING MODULES_ IS ENABLED **\n"
+                                 "** IT IS ONLY POSSIBLE FOR LKRG CONTROL MODULE ;-) **\n"
+                                 "** !! MOST LIKELY SYSTEM IS STABLE !! **\n");
                   }
                }
             }

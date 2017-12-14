@@ -127,8 +127,8 @@ static int __init p_lkrg_register(void) {
 
 p_main_error:
 
-   p_exploit_detection_exit();
    p_protected_features_exit();
+   p_exploit_detection_exit();
    p_deregister_module_notifier();
    p_offload_cache_delete();
    if (p_db.p_IDT_MSR_CRx_array)
@@ -150,8 +150,8 @@ static void __exit p_lkrg_deregister(void) {
 #endif
 
    del_timer(&p_timer);
-   p_exploit_detection_exit();
    p_protected_features_exit();
+   p_exploit_detection_exit();
    p_deregister_notifiers();
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
