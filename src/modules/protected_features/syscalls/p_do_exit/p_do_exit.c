@@ -46,7 +46,7 @@ int p_do_exit_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_regs) {
       p_unprotect_process(current->pid);
    }
 
-   p_ed_enforce_validation();
+//   p_ed_enforce_validation();
 
    spin_lock(&p_rb_ed_pids_lock);
    if (p_remove_task_pid_f(task_pid_nr(current)))

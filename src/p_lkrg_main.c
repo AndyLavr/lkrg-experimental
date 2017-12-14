@@ -127,14 +127,14 @@ static int __init p_lkrg_register(void) {
 
 p_main_error:
 
+   p_exploit_detection_exit();
+   p_protected_features_exit();
    p_deregister_module_notifier();
+   p_offload_cache_delete();
    if (p_db.p_IDT_MSR_CRx_array)
       kzfree(p_db.p_IDT_MSR_CRx_array);
    if (p_lkrg_random_ctrl_password)
       kzfree(p_lkrg_random_ctrl_password);
-   p_offload_cache_delete();
-   p_protected_features_exit();
-   p_exploit_detection_exit();
 
    return p_ret;
 }
@@ -150,6 +150,8 @@ static void __exit p_lkrg_deregister(void) {
 #endif
 
    del_timer(&p_timer);
+   p_exploit_detection_exit();
+   p_protected_features_exit();
    p_deregister_notifiers();
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
@@ -165,12 +167,10 @@ static void __exit p_lkrg_deregister(void) {
 #endif
 
    p_deregister_module_notifier();
+   p_offload_cache_delete();
 
    kzfree(p_db.p_IDT_MSR_CRx_array);
    kzfree(p_lkrg_random_ctrl_password);
-   p_offload_cache_delete();
-   p_protected_features_exit();
-   p_exploit_detection_exit();
 
 }
 

@@ -57,7 +57,8 @@
 #include <linux/scatterlist.h>
 
 #include <linux/signal.h>
-
+#include <linux/timex.h>
+#include <linux/cryptohash.h>
 
 /*
  * p_lkrg modules
