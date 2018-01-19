@@ -42,6 +42,6 @@
 
 #define PI3_MARKER_SIZE 0x8
 #define PI3_MAX_MESSAGE 0x100
-#define PI3_CTRL_STRUCT_SIZE 0x3c
+#define PI3_CTRL_STRUCT_SIZE 0x40
 
 #endif

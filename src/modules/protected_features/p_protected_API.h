@@ -23,6 +23,7 @@
 #include "p_rb_trees/p_rb_p_inodes/p_rb_p_inodes_tree.h"
 #include "syscalls/p_sys_ptrace/p_sys_ptrace.h"
 #include "syscalls/p_sys_execve/p_sys_execve.h"
+#include "syscalls/p_sys_execveat/p_sys_execveat.h"
 #include "syscalls/p_do_exit/p_do_exit.h"
 #include "syscalls/p_do_fork/p_do_fork.h"
 #include "syscalls/p_signal_wrappers/p_sys_tgkill/p_sys_tgkill.h"
@@ -34,6 +35,8 @@
 #include "protected_process_func/p_write_enabled_file_bool/p_write_enabled_file_bool.h"
 #include "protected_process_func/p_process_vm_rw/p_process_vm_rw.h"
 #include "protected_process_func/p_kprobe_seq_start/p_kprobe_seq_start.h"
+#include "syscalls/compat/p_compat_sys_execve/p_compat_sys_execve.h"
+#include "syscalls/compat/p_compat_sys_execveat/p_compat_sys_execveat.h"
 
 #define P_PROTECTED_FEATURES_INIT "/root/.p_lkrg-pf"
 

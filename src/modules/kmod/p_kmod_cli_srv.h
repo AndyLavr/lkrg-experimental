@@ -38,6 +38,7 @@ typedef struct _p_lkrg_global_ctrl_structure {
    /* Reserved values for possible future usage */
    unsigned int p_r0;
 #endif
+   unsigned int p_clean_message;
    unsigned int p_protected_process;
    unsigned int p_pid;
    unsigned int p_protected_files;
@@ -71,9 +72,9 @@ inline int p_discover_ctrl_structure(struct module *p_tmp, unsigned long *p_addr
 inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *p_path_arg);
 inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
                                      unsigned int p_force, unsigned int p_block,
-                                     unsigned int p_hide, unsigned int p_p_process,
-                                     unsigned int p_pid, unsigned int p_p_files,
-                                     unsigned long p_inode);
+                                     unsigned int p_hide, unsigned int p_clean_m,
+                                     unsigned int p_p_process, unsigned int p_pid,
+                                     unsigned int p_p_files, unsigned long p_inode);
 int p_block_elegant(void);
 int p_block_always(void);
 

@@ -262,6 +262,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 #else
    unsigned int p_r0;
 #endif
+   unsigned int p_clean_message;
    unsigned int p_r1,p_r2,p_r3,p_r4,p_r5;
    unsigned int p_protected_process,p_pid;
    unsigned int p_protected_files;
@@ -369,10 +370,12 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
    p_block_modules       = *p_tmp_read++;
 
 #ifdef P_LKRG_UNHIDE
-   p_hide_module       = *p_tmp_read++;
+   p_hide_module         = *p_tmp_read++;
 #else
    p_r0                  = *p_tmp_read++;
 #endif
+
+   p_clean_message       = *p_tmp_read++;
 
    p_protected_process   = *p_tmp_read++;
    p_pid                 = *p_tmp_read++;
@@ -430,6 +433,9 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
           "\tPF: Inode => [0x%lx]\n",p_inode);
 #endif
 
+   p_print_log(P_LKRG_INFO,
+          "\t\"Clean\" message => [0x%x]\n",p_clean_message);
+
 #ifdef P_LKRG_UNHIDE
    p_print_log(P_LKRG_INFO,
           "\tHide myself => [0x%x]\n\n",p_hide_module);
@@ -453,7 +459,7 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 
    /* Validate */
    if (p_validate_ctrl_structure(p_timestamp,p_log_level,p_force_run,
-                                 p_block_modules,p_hide_module,
+                                 p_block_modules,p_hide_module,p_clean_message,
                                  p_protected_process,p_pid,p_protected_files,
                                  p_inode)) {
       p_print_log(P_LKRG_INFO,"CTRL structure validation failed! Non action taken.\n");
@@ -478,6 +484,10 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
    /* Block or not modules */
    if (p_block_modules != 0xFFFFFFFF)
       p_lkrg_global_ctrl.p_block_modules = p_block_modules;
+
+   /* Print 'System is clean!' message or not (regardless loglevel) */
+   if (p_clean_message != 0xFFFFFFFF)
+      p_lkrg_global_ctrl.p_clean_message = p_clean_message;
 
    /* Run integrity check? */
    if (p_force_run != 0xFFFFFFFF)
@@ -536,9 +546,9 @@ inline int p_try_parse_ctrl_structure(long *p_start, unsigned int p_size, long *
 
 inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
                                      unsigned int p_force, unsigned int p_block,
-                                     unsigned int p_hide, unsigned int p_p_process,
-                                     unsigned int p_pid, unsigned int p_p_files,
-                                     unsigned long p_inode) {
+                                     unsigned int p_hide, unsigned int p_clean_m,
+                                     unsigned int p_p_process, unsigned int p_pid,
+                                     unsigned int p_p_files, unsigned long p_inode) {
 
 // STRONG_DEBUG
    p_debug_log(P_LKRG_STRONG_DBG,
@@ -571,6 +581,13 @@ inline int p_validate_ctrl_structure(unsigned int p_time, unsigned int p_log,
           "\tModule blocking validation => [0x%x]\n",p_block);
 
    if (p_block != 0x1 && p_block != 0x0 && p_block != 0xFFFFFFFF) {
+      goto p_validate_ctrl_structure_err;
+   }
+
+   p_print_log(P_LKRG_INFO,
+          "\t\"Clean\" message validation => [0x%x]\n",p_clean_m);
+
+   if (p_clean_m != 0x1 && p_clean_m != 0x0 && p_clean_m != 0xFFFFFFFF) {
       goto p_validate_ctrl_structure_err;
    }
 

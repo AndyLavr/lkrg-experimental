@@ -847,6 +847,15 @@ int p_protected_features_init(void) {
       goto p_protected_features_init_err;
    }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
+   if (p_install_sys_execveat_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook execveat syscall :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+#endif
+
    if (p_install_do_exit_hook()) {
       p_print_log(P_LKRG_ERR,
              "ERROR: Can\'t hook exit syscall :(\n");
@@ -926,6 +935,26 @@ int p_protected_features_init(void) {
    }
 #endif
 
+#ifdef CONFIG_COMPAT
+
+   if (p_install_compat_sys_execve_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook compat_execve syscall :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
+   if (p_install_compat_sys_execveat_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook compat_execveat syscall :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+#endif
+
+#endif
+
    p_ret = P_LKRG_SUCCESS;
 
 #ifdef P_LKRG_DEBUG
@@ -960,6 +989,9 @@ void p_protected_features_exit(void) {
 
    p_uninstall_sys_ptrace_hook();
    p_uninstall_sys_execve_hook();
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
+   p_uninstall_sys_execveat_hook();
+#endif
    p_uninstall_do_exit_hook();
    p_uninstall_do_fork_hook();
    p_uninstall_sys_tgkill_hook();
@@ -972,6 +1004,12 @@ void p_protected_features_exit(void) {
    p_uninstall_process_vm_rw_hook();
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,0,0)
    p_uninstall_kprobe_seq_start_hook();
+#endif
+#ifdef CONFIG_COMPAT
+   p_uninstall_compat_sys_execve_hook();
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
+   p_uninstall_compat_sys_execveat_hook();
+#endif
 #endif
 
    /* Before deleting cache i should clean each entry! */

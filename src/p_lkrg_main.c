@@ -29,6 +29,13 @@ static int __init p_lkrg_register(void) {
 
    int p_ret = P_LKRG_SUCCESS;
 
+   p_print_log(P_LKRG_CRIT, "Loading LKRG...\n");
+
+   /*
+    * Generate random SipHash key
+    */
+   p_global_siphash_key.p_low  = (uint64_t)get_random_long();
+   p_global_siphash_key.p_high = (uint64_t)get_random_long();
 
    memset(&p_lkrg_global_ctrl,0x0,sizeof(p_lkrg_global_ctrl_struct));
    p_lkrg_global_ctrl.p_timestamp = 15;        // seconds
@@ -38,6 +45,7 @@ static int __init p_lkrg_register(void) {
       p_lkrg_global_ctrl.p_log_level = p_init_log_level;
    p_lkrg_global_ctrl.p_block_modules = 0x1;   // Block loading new modules
    p_lkrg_global_ctrl.p_hide_module   = 0x0;   // We are initially not hidden
+   p_lkrg_global_ctrl.p_clean_message = 0x1;   // By default print "System is clean!" message
 
    if (get_kallsyms_address() != P_LKRG_SUCCESS) {
       p_print_log(P_LKRG_CRIT,
@@ -123,6 +131,9 @@ static int __init p_lkrg_register(void) {
     }
    mutex_unlock(&module_mutex);
 
+   p_print_log(P_LKRG_CRIT,
+          "LKRG initialized successfully!\n");
+
    return P_LKRG_SUCCESS;
 
 p_main_error:
@@ -143,6 +154,8 @@ p_main_error:
  * This function normally should never be called - unloading module cleanup
  */
 static void __exit p_lkrg_deregister(void) {
+
+   p_print_log(P_LKRG_CRIT, "Unloading LKRG...\n");
 
 #ifdef P_LKRG_DEBUG
    p_print_log(P_LKRG_DBG,
@@ -172,6 +185,7 @@ static void __exit p_lkrg_deregister(void) {
    kzfree(p_db.p_IDT_MSR_CRx_array);
    kzfree(p_lkrg_random_ctrl_password);
 
+   p_print_log(P_LKRG_CRIT, "LKRG unloaded!\n");
 }
 
 

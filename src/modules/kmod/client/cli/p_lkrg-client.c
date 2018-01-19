@@ -78,6 +78,7 @@ unsigned int p_block_modules;
 #ifdef P_LKRG_UNHIDE
 unsigned int p_hide_module;
 #endif
+unsigned int p_clean_message;
 unsigned int p_protected_process;
 unsigned int p_pid;
 unsigned int p_protected_file;
@@ -121,9 +122,9 @@ int main(int argc, char *argv[]) {
       usage(argv[0]);
 
 #ifdef P_LKRG_UNHIDE
-   while((opt = getopt(argc,argv,"t:l:b:u:P:p:S:s:m:fh?")) != -1) {
+   while((opt = getopt(argc,argv,"t:l:b:c:u:P:p:S:s:m:fh?")) != -1) {
 #else
-   while((opt = getopt(argc,argv,"t:l:b:m:P:p:S:s:fh?")) != -1) {
+   while((opt = getopt(argc,argv,"t:l:b:c:m:P:p:S:s:fh?")) != -1) {
 #endif
       switch(opt) {
 
@@ -185,6 +186,25 @@ int main(int argc, char *argv[]) {
             printf("\t     *) New blocking modules flag is %u (%s blocking modules).\n",
                                                                            p_block_modules,
                                                                            (p_block_modules)?"enabling":
+                                                                           "disabling");
+            break;
+
+         case 'c':
+            printf("\t   [?] Changing \"Clean\" message flag...\r");
+            p_clean_message = p_get_int(optarg,&p_tmp_err);
+            if (p_tmp_err || (p_clean_message != 1 && p_clean_message != 0)) {
+               printf("\t   [-] Changing \"Clean\" message flag... FAILED!\n");
+               if (p_tmp_err) {
+                  printf("\t     *) Bad number format! - [%s]\n\n",optarg);
+                  exit(-1);
+               }
+               printf("\t     *) Bad value for \"Clean\" message flag! - [%u]\n\n",p_clean_message);
+               exit(-1);
+            }
+            printf("\t   [+] Changing \"Clean\" message flag... DONE!\n");
+            printf("\t     *) New \"Clean\" message flag is %u (%s message).\n",
+                                                                           p_clean_message,
+                                                                           (p_clean_message)?"enabling":
                                                                            "disabling");
             break;
 
@@ -344,7 +364,8 @@ int main(int argc, char *argv[]) {
    }
 
    if (p_timestamp == 0xFFFFFFFF && p_log_level == 0xFFFFFFFF &&
-       p_force_run == 0xFFFFFFFF && p_block_modules == 0xFFFFFFFF
+       p_force_run == 0xFFFFFFFF && p_block_modules == 0xFFFFFFFF &&
+       p_clean_message == 0xFFFFFFFF
 #ifdef P_LKRG_UNHIDE
        && p_hide_module == 0xFFFFFFFF
 #endif
@@ -479,6 +500,9 @@ void usage(char *arg) {
    printf("\t\t   -b <value>   : Configure kernel module loading:\n");
    printf("\t\t                      0 - unblock\n");
    printf("\t\t                      1 - block\n");
+   printf("\t\t   -c <value>   : Configure \"Clean\" message regardless loglevel:\n");
+   printf("\t\t                      0 - disable\n");
+   printf("\t\t                      1 - enable\n");
 #ifdef P_LKRG_UNHIDE
    printf("\t\t   -u <value>    : Configure (Un)hide p_lkrg module flag:\n");
    printf("\t\t                      1 - hide\n");
@@ -1122,6 +1146,8 @@ int p_change_ctrl_struct(void *p_buf) {
 #else
    *p_val++ = 0xffffffff; // Reserved
 #endif
+
+   *p_val++ = p_clean_message; // Enable/Disable 'System is clean!' message
 
    *p_val++ = p_protected_process;   // Protected process...
    *p_val++ = p_pid;                 // ... if so, PID

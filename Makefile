@@ -16,7 +16,7 @@ P_CLI_KMOD = "p_lkrg_kmod_cli.ko"
 
 obj-m += p_lkrg.o
 p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
-               src/modules/hashing/p_super_fast_hash.o \
+               src/modules/hashing/p_lkrg_fast_hash.o \
                src/modules/wrap/p_struct_wrap.o \
                src/modules/hashing/p_crypto_sha1.o \
                src/modules/integrity_timer/p_integrity_timer.o \
@@ -31,6 +31,7 @@ p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/protected_features/p_rb_trees/p_rb_p_inodes/p_rb_p_inodes_tree.o \
                src/modules/protected_features/syscalls/p_sys_ptrace/p_sys_ptrace.o \
                src/modules/protected_features/syscalls/p_sys_execve/p_sys_execve.o \
+               src/modules/protected_features/syscalls/p_sys_execveat/p_sys_execveat.o \
                src/modules/protected_features/syscalls/p_do_exit/p_do_exit.o \
                src/modules/protected_features/syscalls/p_do_fork/p_do_fork.o \
                src/modules/protected_features/syscalls/p_signal_wrappers/p_sys_tgkill/p_sys_tgkill.o \
@@ -42,6 +43,8 @@ p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/protected_features/protected_process_func/p_write_enabled_file_bool/p_write_enabled_file_bool.o \
                src/modules/protected_features/protected_process_func/p_process_vm_rw/p_process_vm_rw.o \
                src/modules/protected_features/protected_process_func/p_kprobe_seq_start/p_kprobe_seq_start.o \
+               src/modules/protected_features/syscalls/compat/p_compat_sys_execve/p_compat_sys_execve.o \
+               src/modules/protected_features/syscalls/compat/p_compat_sys_execveat/p_compat_sys_execveat.o \
                src/modules/protected_features/p_protected_API.o \
                src/modules/exploit_detection/p_rb_ed_trees/p_rb_ed_pids/p_rb_ed_pids_tree.o \
                src/modules/exploit_detection/syscalls/p_sys_setuid/p_sys_setuid.o \
@@ -64,6 +67,8 @@ p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/exploit_detection/syscalls/caps/p_cap_task_prctl/p_cap_task_prctl.o \
                src/modules/exploit_detection/syscalls/keyring/p_lookup_user_key/p_lookup_user_key.o \
                src/modules/exploit_detection/syscalls/keyring/p_key_change_session_keyring/p_key_change_session_keyring.o \
+               src/modules/exploit_detection/syscalls/keyring/p_sys_keyctl/p_sys_keyctl.o \
+               src/modules/exploit_detection/syscalls/compat/p_compat_sys_keyctl/p_compat_sys_keyctl.o \
                src/modules/exploit_detection/p_exploit_detection.o \
                src/p_lkrg_main.o
 

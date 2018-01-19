@@ -36,16 +36,17 @@ static int __init p_lkrg_kmod_cli_register(void) {
            ".int 0x02020202\n"     // Force to run checking routine
            ".int 0x03030303\n"     // Block / unblock dynamic module loading
            ".int 0x04040404\n"     // Hide / unhide or padding
-           ".int 0x05050505\n"     // Protected process...
-           ".int 0x06060606\n"     // ... if so, PID
-           ".int 0x07070707\n"     // Protected files...
-           ".int 0x08080808\n"     // ... if so, Low number or entire inode...
-           ".int 0x09090909\n"     // ... High number or padding
-           ".int 0x0a0a0a0a\n"     // Reserved 1
-           ".int 0x0b0b0b0b\n"     // Reserved 2
-           ".int 0x0c0c0c0c\n"     // Reserved 3
-           ".int 0x0d0d0d0d\n"     // Reserved 4
-           ".int 0x0e0e0e0e\n"     // Reserved 5
+           ".int 0x05050505\n"     // "Clean" message enable / disable
+           ".int 0x06060606\n"     // Protected process...
+           ".int 0x07070707\n"     // ... if so, PID
+           ".int 0x08080808\n"     // Protected files...
+           ".int 0x09090909\n"     // ... if so, Low number or entire inode...
+           ".int 0x0a0a0a0a\n"     // ... High number or padding
+           ".int 0x0b0b0b0b\n"     // Reserved 1
+           ".int 0x0c0c0c0c\n"     // Reserved 2
+           ".int 0x0d0d0d0d\n"     // Reserved 3
+           ".int 0x0e0e0e0e\n"     // Reserved 4
+           ".int 0x0f0f0f0f\n"     // Reserved 5
            PI3_MARKER_INIT_END
 
            /* Make compiler silent */
