@@ -37,6 +37,11 @@
 #include "protected_process_func/p_kprobe_seq_start/p_kprobe_seq_start.h"
 #include "syscalls/compat/p_compat_sys_execve/p_compat_sys_execve.h"
 #include "syscalls/compat/p_compat_sys_execveat/p_compat_sys_execveat.h"
+#include "syscalls/compat/p_compat_sys_ptrace/p_compat_sys_ptrace.h"
+#include "syscalls/compat/p_compat_process_vm_rw/p_compat_process_vm_rw.h"
+#include "syscalls/compat/p_compat_sys_rt_sigqueueinfo/p_compat_sys_rt_sigqueueinfo.h"
+#include "syscalls/compat/p_compat_sys_rt_tgsigqueueinfo/p_compat_sys_rt_tgsigqueueinfo.h"
+
 
 #define P_PROTECTED_FEATURES_INIT "/root/.p_lkrg-pf"
 

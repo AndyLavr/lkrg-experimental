@@ -45,6 +45,10 @@ p_lkrg-objs += src/modules/ksyms/p_resolve_ksym.o \
                src/modules/protected_features/protected_process_func/p_kprobe_seq_start/p_kprobe_seq_start.o \
                src/modules/protected_features/syscalls/compat/p_compat_sys_execve/p_compat_sys_execve.o \
                src/modules/protected_features/syscalls/compat/p_compat_sys_execveat/p_compat_sys_execveat.o \
+               src/modules/protected_features/syscalls/compat/p_compat_sys_ptrace/p_compat_sys_ptrace.o \
+               src/modules/protected_features/syscalls/compat/p_compat_process_vm_rw/p_compat_process_vm_rw.o \
+               src/modules/protected_features/syscalls/compat/p_compat_sys_rt_sigqueueinfo/p_compat_sys_rt_sigqueueinfo.o \
+               src/modules/protected_features/syscalls/compat/p_compat_sys_rt_tgsigqueueinfo/p_compat_sys_rt_tgsigqueueinfo.o \
                src/modules/protected_features/p_protected_API.o \
                src/modules/exploit_detection/p_rb_ed_trees/p_rb_ed_pids/p_rb_ed_pids_tree.o \
                src/modules/exploit_detection/syscalls/p_sys_setuid/p_sys_setuid.o \

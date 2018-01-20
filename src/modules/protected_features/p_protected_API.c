@@ -580,7 +580,7 @@ int p_get_inode(char *p_arg, struct inode **p_out_inode, struct inode **p_parent
 
    if ( (p_ret = kern_path(p_arg, LOOKUP_FOLLOW, p_path)) != P_LKRG_SUCCESS) {
       p_print_log(P_LKRG_ERR,
-             "[kern_path] Can\'t resolve filename path :(");
+             "[kern_path] Can\'t resolve filename path :(\n");
       p_ret = P_LKRG_GENERAL_ERROR;
       goto p_get_inode_out;
    }
@@ -953,6 +953,34 @@ int p_protected_features_init(void) {
    }
 #endif
 
+   if (p_install_compat_sys_ptrace_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook compat_ptrace syscall :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+
+   if (p_install_compat_process_vm_rw_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook compat_process_vm_rw function :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+
+   if (p_install_compat_sys_rt_sigqueueinfo_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook compat_rt_sigqueueinfo syscall :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+
+   if (p_install_compat_sys_rt_tgsigqueueinfo_hook()) {
+      p_print_log(P_LKRG_ERR,
+             "ERROR: Can\'t hook compat_rt_sigqueueinfo syscall :(\n");
+      p_ret = P_LKRG_GENERAL_ERROR;
+      goto p_protected_features_init_err;
+   }
+
 #endif
 
    p_ret = P_LKRG_SUCCESS;
@@ -1010,6 +1038,10 @@ void p_protected_features_exit(void) {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,19,0)
    p_uninstall_compat_sys_execveat_hook();
 #endif
+   p_uninstall_compat_sys_ptrace_hook();
+   p_uninstall_compat_process_vm_rw_hook();
+   p_uninstall_compat_sys_rt_sigqueueinfo_hook();
+   p_uninstall_compat_sys_rt_tgsigqueueinfo_hook();
 #endif
 
    /* Before deleting cache i should clean each entry! */

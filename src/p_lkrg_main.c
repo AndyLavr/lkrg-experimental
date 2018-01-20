@@ -162,10 +162,11 @@ static void __exit p_lkrg_deregister(void) {
           "I should never be here! This operation probably is going to break your system! Goodbye ;)\n");
 #endif
 
+   p_deregister_notifiers();
+   p_deregister_module_notifier();
    del_timer(&p_timer);
    p_protected_features_exit();
    p_exploit_detection_exit();
-   p_deregister_notifiers();
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4,10,0)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,15,0)
@@ -179,7 +180,6 @@ static void __exit p_lkrg_deregister(void) {
    cpuhp_remove_state_nocalls(p_hot_cpus);
 #endif
 
-   p_deregister_module_notifier();
    p_offload_cache_delete();
 
    kzfree(p_db.p_IDT_MSR_CRx_array);

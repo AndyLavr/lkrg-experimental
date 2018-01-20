@@ -61,9 +61,8 @@ int p_process_vm_rw_entry(struct kretprobe_instance *p_ri, struct pt_regs *p_reg
 
    if (p_is_protected_pid(p_regs->di)) {
       p_print_log(P_LKRG_INFO,
-             "Normal process[%s] pid:%d tries to kill() protected "
-             "pid:%ld with sign:%ld\n",
-             current->comm,current->pid,p_regs->di,p_regs->si);
+             "Normal process[%s] pid:%d tries to process_vm_rw() protected pid:%ld\n",
+             current->comm,current->pid,p_regs->di);
       p_regs->di = INT_MAX;
       p_regs->si = INT_MAX;
       p_regs->dx = INT_MAX;
